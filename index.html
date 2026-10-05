@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lớp Học Thông Minh - Gia Sư AI</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Gia Sư AI & Cô Giáo - Lớp Học Số</title>
+  <link rel="stylesheet" href="./style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -13,21 +13,28 @@
 </head>
 <body>
 
-  <!-- Khung tổng thể giao diện lớp học -->
-  <div class="classroom-container">
-   <body>
-
-  <!-- DẢI TRANG TRÍ GIÁO DỤC BÊN TRÁI -->
+  <!-- CỘT BIỂU TƯỢNG HỌC TẬP THỰC TẾ BÊN TRÁI -->
   <aside class="side-decor left-decor">
-    <div class="decor-item"><i class="fa-solid fa-book-open"></i><span>Toán & Tiếng Việt</span></div>
-    <div class="decor-item"><i class="fa-solid fa-laptop-code"></i><span>Tin học</span></div>
-    <div class="decor-item"><i class="fa-solid fa-robot"></i><span>Trí tuệ nhân tạo</span></div>
-    <div class="decor-item"><i class="fa-solid fa-shapes"></i><span>STEM</span></div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/3389/3389081.png" alt="Sách vở">
+      <span>Toán & Tiếng Việt</span>
+    </div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/3067/3067260.png" alt="Tin học">
+      <span>Tin học 5</span>
+    </div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png" alt="Robot AI">
+      <span>Gia sư AI</span>
+    </div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/1089/1089129.png" alt="STEM">
+      <span>Sáng tạo STEM</span>
+    </div>
   </aside>
 
-  <!-- KHUNG NỘI DUNG CHÍNH CỦA LỚP HỌC -->
+  <!-- KHUNG CHAT DUY NHẤT (ĐÃ XÓA PHẦN BỊ LẶP) -->
   <div class="classroom-container">
-    <!-- Toàn bộ nội dung banner, chat-box, input-container giữ nguyên như cũ -->
     <header class="classroom-banner">
       <div class="banner-overlay">
         <div class="banner-content">
@@ -46,128 +53,63 @@
     </header>
 
     <main class="chat-box" id="chat-box">
-      <!-- Các tin nhắn -->
-    </main>
-
-    <div id="image-preview-container" class="image-preview-bar hidden">
-      <div class="preview-item">
-        <img id="image-preview" src="" alt="Ảnh bài tập">
-        <button id="btn-remove-image" type="button" title="Xóa ảnh">&times;</button>
-      </div>
-      <span class="preview-tip">Đã chọn ảnh bài tập. Hãy nhập thêm câu hỏi hoặc nhấn Gửi!</span>
-    </div>
-
-    <footer class="input-container">
-      <form id="chat-form">
-        <label for="image-upload" class="action-btn" title="Gửi ảnh bài tập">
-          <i class="fa-solid fa-image"></i>
-          <input type="file" id="image-upload" accept="image/*" style="display: none;">
-        </label>
-        <button type="button" id="btn-mic" class="action-btn" title="Bấm để nói tiếng Việt">
-          <i class="fa-solid fa-microphone"></i>
-        </button>
-        <textarea id="user-input" rows="1" placeholder="Em muốn hỏi gì, hoặc bấm Micro để nói..." required></textarea>
-        <button type="submit" id="btn-send" class="btn-send" title="Gửi câu hỏi">
-          <i class="fa-solid fa-paper-plane"></i>
-        </button>
-      </form>
-    </footer>
-  </div>
-
-  <!-- DẢI TRANG TRÍ GIÁO DỤC BÊN PHẢI -->
-  <aside class="side-decor right-decor">
-    <div class="decor-item"><i class="fa-solid fa-mobile-screen-button"></i><span>Học trên di động</span></div>
-    <div class="decor-item"><i class="fa-solid fa-flask"></i><span>Khoa học</span></div>
-    <div class="decor-item"><i class="fa-solid fa-shield-halved"></i><span>An toàn số</span></div>
-    <div class="decor-item"><i class="fa-solid fa-award"></i><span>Công dân số</span></div>
-  </aside>
-
-  <!-- CHÂN TRANG CÁNH ĐỒNG HOA HƯỚNG DƯƠNG -->
-  <div class="sunflower-field">
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-    <div class="flower">🌻</div>
-  </div>
-
-  <!-- Modal API Key giữ nguyên -->
-  <div class="modal-overlay" id="settings-modal">...</div>
-
-  <script src="./script.js"></script>
-</body> 
-      <!-- Banner lớp học hoạt hình -->
-<header class="classroom-banner">
-  <div class="banner-overlay">
-    <div class="banner-content">
-      <div class="banner-badge"><i class="fa-solid fa-sparkles"></i> Lớp Học Thông Minh 4.0</div>
-      
-      <!-- ĐÃ BỎ TỪ 'DỄ THƯƠNG' VÀ THÊM HUY HIỆU TÁC GIẢ -->
-      <div class="title-with-badge">
-        <h1>Gia Sư AI & Cô Giáo</h1>
-        <span class="author-badge"><i class="fa-solid fa-circle-check"></i> Bản quyền: Vân Anh Vi</span>
-      </div>
-      
-      <p>Cùng Robot thông minh khám phá kiến thức mỗi ngày!</p>
-    </div>
-    <div class="banner-actions">
-      <button id="btn-clear-chat" title="Bắt đầu câu hỏi mới"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
-      <button id="btn-open-settings" title="Cài đặt khóa API"><i class="fa-solid fa-gear"></i> Cài đặt</button>
-    </div>
-  </div>
-</header>
-
-    <!-- Khung trò chuyện tương tác -->
-    <main class="chat-box" id="chat-box">
       <div class="message ai-message">
         <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
         <div class="msg-content">
-          Chào em! Cô giáo và Robot Gia sư AI đã sẵn sàng đồng hành cùng em. Em có thể <strong>gõ chữ</strong>, <strong>nói vào micro</strong> hoặc <strong>gửi hình ảnh bài tập</strong> để chúng mình cùng giải đáp nhé!
+          Chào bạn! Tớ là <strong>Gia sư trợ lý</strong> đồng hành cùng cô Vân Anh. Hôm nay bạn muốn cùng tớ khám phá bài học thú vị nào? Cứ gõ câu hỏi, gửi ảnh hoặc bấm micro nói nhé! 🚀
         </div>
       </div>
     </main>
 
-    <!-- Vùng xem trước hình ảnh học sinh vừa chọn tải lên -->
     <div id="image-preview-container" class="image-preview-bar hidden">
       <div class="preview-item">
         <img id="image-preview" src="" alt="Ảnh bài tập">
         <button id="btn-remove-image" type="button" title="Xóa ảnh">&times;</button>
       </div>
-      <span class="preview-tip">Đã chọn ảnh bài tập. Hãy nhập thêm câu hỏi hoặc nhấn Gửi!</span>
+      <span class="preview-tip">Đã chọn ảnh bài tập. Nhập câu hỏi rồi bấm Gửi nhé!</span>
     </div>
 
-    <!-- Khung điều khiển nhập liệu đa phương thức -->
     <footer class="input-container">
       <form id="chat-form">
-        <!-- Nút tải ảnh bài tập -->
         <label for="image-upload" class="action-btn" title="Gửi ảnh bài tập">
           <i class="fa-solid fa-image"></i>
           <input type="file" id="image-upload" accept="image/*" style="display: none;">
         </label>
-
-        <!-- Nút thu âm / Micro giọng nói -->
         <button type="button" id="btn-mic" class="action-btn" title="Bấm để nói tiếng Việt">
           <i class="fa-solid fa-microphone"></i>
         </button>
-
-        <!-- Ô nhập câu hỏi -->
         <textarea id="user-input" rows="1" placeholder="Em muốn hỏi gì, hoặc bấm Micro để nói..." required></textarea>
-
-        <!-- Nút Gửi câu hỏi -->
         <button type="submit" id="btn-send" class="btn-send" title="Gửi câu hỏi">
           <i class="fa-solid fa-paper-plane"></i>
         </button>
       </form>
     </footer>
-
   </div>
 
-  <!-- Hộp thoại Cài đặt API Key -->
+  <!-- CỘT BIỂU TƯỢNG HỌC TẬP THỰC TẾ BÊN PHẢI -->
+  <aside class="side-decor right-decor">
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/2920/2920329.png" alt="Điện thoại di động">
+      <span>Học trên di động</span>
+    </div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/1048/1048944.png" alt="Khoa học">
+      <span>Khoa học</span>
+    </div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/2438/2438078.png" alt="An toàn số">
+      <span>An toàn mạng</span>
+    </div>
+    <div class="decor-card">
+      <img src="https://cdn-icons-png.flaticon.com/512/3135/3135763.png" alt="Công dân số">
+      <span>Công dân số</span>
+    </div>
+  </aside>
+
+  <!-- CHÂN TRANG: CÁNH ĐỒNG HOA HƯỚNG DƯƠNG CHÂN THỰC TRẢI DÀI -->
+  <div class="real-sunflower-field"></div>
+
+  <!-- Hộp thoại API Key -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -175,7 +117,7 @@
         <button class="btn-close" id="btn-close-modal">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Dán mã <strong>Gemini API Key</strong> vào đây để kích hoạt Gia sư AI và tính năng nhận diện ảnh/giọng nói:</p>
+        <p>Dán mã <strong>Gemini API Key</strong> vào đây để kích hoạt Gia sư AI:</p>
         <input type="password" id="api-key-input" placeholder="AIzaSy...">
         <div class="key-status" id="key-status-text"></div>
       </div>
@@ -186,6 +128,6 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="./script.js"></script>
 </body>
 </html>
