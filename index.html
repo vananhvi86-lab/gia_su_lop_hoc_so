@@ -15,7 +15,92 @@
 
   <!-- Khung tổng thể giao diện lớp học -->
   <div class="classroom-container">
-    
+   <body>
+
+  <!-- DẢI TRANG TRÍ GIÁO DỤC BÊN TRÁI -->
+  <aside class="side-decor left-decor">
+    <div class="decor-item"><i class="fa-solid fa-book-open"></i><span>Toán & Tiếng Việt</span></div>
+    <div class="decor-item"><i class="fa-solid fa-laptop-code"></i><span>Tin học</span></div>
+    <div class="decor-item"><i class="fa-solid fa-robot"></i><span>Trí tuệ nhân tạo</span></div>
+    <div class="decor-item"><i class="fa-solid fa-shapes"></i><span>STEM</span></div>
+  </aside>
+
+  <!-- KHUNG NỘI DUNG CHÍNH CỦA LỚP HỌC -->
+  <div class="classroom-container">
+    <!-- Toàn bộ nội dung banner, chat-box, input-container giữ nguyên như cũ -->
+    <header class="classroom-banner">
+      <div class="banner-overlay">
+        <div class="banner-content">
+          <div class="banner-badge"><i class="fa-solid fa-sparkles"></i> Lớp Học Thông Minh 4.0</div>
+          <div class="title-with-badge">
+            <h1>Gia Sư AI & Cô Giáo</h1>
+            <span class="author-badge"><i class="fa-solid fa-circle-check"></i> Bản quyền: Vân Anh Vi</span>
+          </div>
+          <p>Cùng Robot thông minh khám phá kiến thức mỗi ngày!</p>
+        </div>
+        <div class="banner-actions">
+          <button id="btn-clear-chat" title="Bắt đầu câu hỏi mới"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
+          <button id="btn-open-settings" title="Cài đặt khóa API"><i class="fa-solid fa-gear"></i> Cài đặt</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="chat-box" id="chat-box">
+      <!-- Các tin nhắn -->
+    </main>
+
+    <div id="image-preview-container" class="image-preview-bar hidden">
+      <div class="preview-item">
+        <img id="image-preview" src="" alt="Ảnh bài tập">
+        <button id="btn-remove-image" type="button" title="Xóa ảnh">&times;</button>
+      </div>
+      <span class="preview-tip">Đã chọn ảnh bài tập. Hãy nhập thêm câu hỏi hoặc nhấn Gửi!</span>
+    </div>
+
+    <footer class="input-container">
+      <form id="chat-form">
+        <label for="image-upload" class="action-btn" title="Gửi ảnh bài tập">
+          <i class="fa-solid fa-image"></i>
+          <input type="file" id="image-upload" accept="image/*" style="display: none;">
+        </label>
+        <button type="button" id="btn-mic" class="action-btn" title="Bấm để nói tiếng Việt">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+        <textarea id="user-input" rows="1" placeholder="Em muốn hỏi gì, hoặc bấm Micro để nói..." required></textarea>
+        <button type="submit" id="btn-send" class="btn-send" title="Gửi câu hỏi">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </footer>
+  </div>
+
+  <!-- DẢI TRANG TRÍ GIÁO DỤC BÊN PHẢI -->
+  <aside class="side-decor right-decor">
+    <div class="decor-item"><i class="fa-solid fa-mobile-screen-button"></i><span>Học trên di động</span></div>
+    <div class="decor-item"><i class="fa-solid fa-flask"></i><span>Khoa học</span></div>
+    <div class="decor-item"><i class="fa-solid fa-shield-halved"></i><span>An toàn số</span></div>
+    <div class="decor-item"><i class="fa-solid fa-award"></i><span>Công dân số</span></div>
+  </aside>
+
+  <!-- CHÂN TRANG CÁNH ĐỒNG HOA HƯỚNG DƯƠNG -->
+  <div class="sunflower-field">
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+    <div class="flower">🌻</div>
+  </div>
+
+  <!-- Modal API Key giữ nguyên -->
+  <div class="modal-overlay" id="settings-modal">...</div>
+
+  <script src="./script.js"></script>
+</body> 
       <!-- Banner lớp học hoạt hình -->
 <header class="classroom-banner">
   <div class="banner-overlay">
