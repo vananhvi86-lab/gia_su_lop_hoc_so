@@ -497,22 +497,100 @@ body {
   gap: 12px;
   flex-wrap: wrap;
 }
-
-.author-badge {
-  display: inline-flex;
+/* TỔNG THỂ */
+body {
+  background: linear-gradient(180deg, #f0fdf4 0%, #fefce8 60%, #fef08a 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 5px;
-  background: rgba(46, 125, 50, 0.15);
-  color: #1b5e20;
-  border: 1px solid #81c784;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  backdrop-filter: blur(4px);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  padding: 16px;
+  padding-bottom: 90px; /* Dành khoảng trống cho cánh đồng hoa bên dưới */
+  position: relative;
+  overflow-x: hidden;
 }
 
+/* ĐẢM BẢO KHUNG CHAT DUY NHẤT VÀ NỔI BẬT */
+.classroom-container {
+  width: 100%;
+  max-width: 860px;
+  height: 84vh;
+  background: #ffffff;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  border: 3px solid #86efac;
+  position: relative;
+  z-index: 10;
+}
+
+/* THẺ TRANG TRÍ CHÂN THỰC 2 BÊN */
+.side-decor {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 5;
+}
+
+.left-decor { left: 24px; }
+.right-decor { right: 24px; }
+
+.decor-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border: 2px solid #bbf7d0;
+  transition: all 0.3s ease;
+  width: 95px;
+}
+
+.decor-card:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(46, 125, 50, 0.2);
+}
+
+.decor-card img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.decor-card span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #166534;
+  text-align: center;
+}
+
+/* CÁNH ĐỒNG HOA HƯỚNG DƯƠNG CHÂN THỰC TRẢI DÀI */
+.real-sunflower-field {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 95px;
+  /* Sử dụng ảnh cánh đồng hoa hướng dương thực tế trải dài sắc nét */
+  background: url('https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=1600&q=80') center bottom / cover repeat-x;
+  z-index: 2;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
+  border-top: 4px solid #facc15;
+}
+
+/* Ẩn các dải 2 bên khi học sinh dùng trên điện thoại màn hình nhỏ */
+@media (max-width: 1120px) {
+  .side-decor { display: none; }
+  .classroom-container { height: 88vh; }
+}
 .author-badge i {
   color: #2e7d32;
   font-size: 0.85rem;
