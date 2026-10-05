@@ -364,3 +364,30 @@ body {
 
 .btn-primary { background: #2e7d32; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; }
 .btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+/* Tùy chỉnh tiêu đề và huy hiệu bản quyền Vân Anh Vi */
+.title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.author-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(46, 125, 50, 0.15);
+  color: #1b5e20;
+  border: 1px solid #81c784;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.author-badge i {
+  color: #2e7d32;
+  font-size: 0.85rem;
+}
