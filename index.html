@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lớp Học Thông Minh - Gia Sư AI</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+  <!-- Khung tổng thể giao diện lớp học -->
+  <div class="classroom-container">
+    
+    <!-- Banner lớp học hoạt hình -->
+    <header class="classroom-banner">
+      <div class="banner-overlay">
+        <div class="banner-content">
+          <div class="banner-badge"><i class="fa-solid fa-sparkles"></i> Lớp Học Thông Minh 4.0</div>
+          <h1>Gia Sư AI & Cô Giáo Dễ Thương</h1>
+          <p>Cùng Robot thông minh khám phá kiến thức mỗi ngày!</p>
+        </div>
+        <div class="banner-actions">
+          <button id="btn-clear-chat" title="Bắt đầu câu hỏi mới"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
+          <button id="btn-open-settings" title="Cài đặt khóa API"><i class="fa-solid fa-gear"></i> Cài đặt</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Khung trò chuyện tương tác -->
+    <main class="chat-box" id="chat-box">
+      <div class="message ai-message">
+        <div class="msg-avatar"><i class="fa-solid fa-robot"></i></div>
+        <div class="msg-content">
+          Chào em! Cô giáo và Robot Gia sư AI đã sẵn sàng đồng hành cùng em. Em có thể <strong>gõ chữ</strong>, <strong>nói vào micro</strong> hoặc <strong>gửi hình ảnh bài tập</strong> để chúng mình cùng giải đáp nhé!
+        </div>
+      </div>
+    </main>
+
+    <!-- Vùng xem trước hình ảnh học sinh vừa chọn tải lên -->
+    <div id="image-preview-container" class="image-preview-bar hidden">
+      <div class="preview-item">
+        <img id="image-preview" src="" alt="Ảnh bài tập">
+        <button id="btn-remove-image" type="button" title="Xóa ảnh">&times;</button>
+      </div>
+      <span class="preview-tip">Đã chọn ảnh bài tập. Hãy nhập thêm câu hỏi hoặc nhấn Gửi!</span>
+    </div>
+
+    <!-- Khung điều khiển nhập liệu đa phương thức -->
+    <footer class="input-container">
+      <form id="chat-form">
+        <!-- Nút tải ảnh bài tập -->
+        <label for="image-upload" class="action-btn" title="Gửi ảnh bài tập">
+          <i class="fa-solid fa-image"></i>
+          <input type="file" id="image-upload" accept="image/*" style="display: none;">
+        </label>
+
+        <!-- Nút thu âm / Micro giọng nói -->
+        <button type="button" id="btn-mic" class="action-btn" title="Bấm để nói tiếng Việt">
+          <i class="fa-solid fa-microphone"></i>
+        </button>
+
+        <!-- Ô nhập câu hỏi -->
+        <textarea id="user-input" rows="1" placeholder="Em muốn hỏi gì, hoặc bấm Micro để nói..." required></textarea>
+
+        <!-- Nút Gửi câu hỏi -->
+        <button type="submit" id="btn-send" class="btn-send" title="Gửi câu hỏi">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </form>
+    </footer>
+
+  </div>
+
+  <!-- Hộp thoại Cài đặt API Key -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-key"></i> Cài Đặt API Key</h3>
+        <button class="btn-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Dán mã <strong>Gemini API Key</strong> vào đây để kích hoạt Gia sư AI và tính năng nhận diện ảnh/giọng nói:</p>
+        <input type="password" id="api-key-input" placeholder="AIzaSy...">
+        <div class="key-status" id="key-status-text"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-cancel-modal">Đóng</button>
+        <button class="btn-primary" id="btn-save-key">Lưu lại</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

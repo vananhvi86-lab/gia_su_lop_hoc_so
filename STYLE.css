@@ -1,0 +1,366 @@
+:root {
+  --primary-green: #2e7d32;
+  --accent-green: #4caf50;
+  --soft-blue: #e3f2fd;
+  --robot-blue: #0284c7;
+  --bg-color: #f1f8e9;
+  --text-dark: #263238;
+  --border-color: #dcedc8;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', sans-serif;
+}
+
+body {
+  background: var(--bg-color);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+}
+
+/* Thân ứng dụng */
+.classroom-container {
+  width: 100%;
+  max-width: 900px;
+  height: 94vh;
+  background: #ffffff;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border: 3px solid #c8e6c9;
+}
+
+/* Banner Lớp học hoạt hình */
+.classroom-banner {
+  /* Thay đường dẫn ảnh minh họa cô giáo và robot vào đây */
+  background: url('watermarked_img_9161237524078506821.png') center/cover no-repeat;
+  position: relative;
+  height: 190px;
+  border-bottom: 3px solid #a5d6a7;
+}
+
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.7) 60%, rgba(255, 255, 255, 0.3) 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+}
+
+.banner-badge {
+  display: inline-block;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-bottom: 6px;
+}
+
+.banner-content h1 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #1b5e20;
+}
+
+.banner-content p {
+  font-size: 0.95rem;
+  color: #37474f;
+  margin-top: 2px;
+  font-weight: 600;
+}
+
+.banner-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.banner-actions button {
+  background: #ffffff;
+  border: 1.5px solid #a5d6a7;
+  color: #2e7d32;
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.banner-actions button:hover {
+  background: #e8f5e9;
+  transform: translateY(-1px);
+}
+
+/* Hộp hội thoại */
+.chat-box {
+  flex: 1;
+  padding: 20px 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fafdf7;
+}
+
+.message {
+  display: flex;
+  gap: 12px;
+  max-width: 85%;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.msg-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ai-message .msg-avatar {
+  background: #e0f2fe;
+  color: var(--robot-blue);
+  border: 2px solid #bae6fd;
+}
+
+.user-message {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.user-message .msg-avatar {
+  background: #e8f5e9;
+  color: var(--primary-green);
+  border: 2px solid #c8e6c9;
+}
+
+.msg-content {
+  padding: 14px 18px;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.ai-message .msg-content {
+  background: #ffffff;
+  color: var(--text-dark);
+  border: 1.5px solid #e0e0e0;
+  border-top-left-radius: 4px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.03);
+}
+
+.user-message .msg-content {
+  background: var(--accent-green);
+  color: #ffffff;
+  border-top-right-radius: 4px;
+}
+
+.msg-content img {
+  max-width: 220px;
+  border-radius: 8px;
+  margin-top: 8px;
+  display: block;
+  border: 2px solid #ffffff;
+}
+
+/* Vùng xem trước ảnh chuẩn bị gửi */
+.image-preview-bar {
+  padding: 8px 24px;
+  background: #f1f8e9;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.image-preview-bar.hidden {
+  display: none;
+}
+
+.preview-item {
+  position: relative;
+  width: 50px;
+  height: 50px;
+}
+
+.preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #81c784;
+}
+
+#btn-remove-image {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.preview-tip {
+  font-size: 0.85rem;
+  color: #558b2f;
+  font-weight: 600;
+}
+
+/* Khung công cụ nhập liệu */
+.input-container {
+  padding: 14px 20px;
+  background: #ffffff;
+  border-top: 2px solid #e8f5e9;
+}
+
+#chat-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f9fbe7;
+  border: 2px solid #c5e1a5;
+  padding: 6px 10px;
+  border-radius: 16px;
+}
+
+.action-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: none;
+  background: #ffffff;
+  color: #2e7d32;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+/* Hiệu ứng khi Micro đang ghi âm */
+.action-btn.recording {
+  background: #ef4444;
+  color: #ffffff;
+  animation: pulseMic 1s infinite alternate;
+}
+
+@keyframes pulseMic {
+  from { transform: scale(1); box-shadow: 0 0 0px #ef4444; }
+  to { transform: scale(1.1); box-shadow: 0 0 10px #ef4444; }
+}
+
+#user-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.95rem;
+  resize: none;
+  max-height: 90px;
+  color: #263238;
+}
+
+.btn-send {
+  background: #2e7d32;
+  color: #ffffff;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
+
+.btn-send:hover {
+  background: #1b5e20;
+}
+
+/* Modal Cài đặt */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-card {
+  background: #ffffff;
+  width: 90%;
+  max-width: 460px;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  background: #e8f5e9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 { color: #1b5e20; font-size: 1.1rem; }
+.btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #555; }
+.modal-body { padding: 20px; }
+.modal-body input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #c8e6c9;
+  outline: none;
+  margin-top: 10px;
+}
+.modal-footer {
+  padding: 14px 20px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: #f9fbe7;
+}
+
+.btn-primary { background: #2e7d32; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; }
+.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
