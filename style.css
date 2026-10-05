@@ -41,7 +41,7 @@ body {
 /* Banner Lớp học hoạt hình */
 .classroom-banner {
   /* Thay đường dẫn ảnh minh họa cô giáo và robot vào đây */
-  background: url('watermarked_img_9161237524078506821.png') center/cover no-repeat;
+  background: url('classroom-bg.png') center/cover no-repeat;
   position: relative;
   height: 190px;
   border-bottom: 3px solid #a5d6a7;
