@@ -212,9 +212,14 @@ chatForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const message = userInput.value.trim();
   const imageToSend = currentBase64Image;
-
   if (!message && !imageToSend) return;
-
+// Cho phép học sinh nhấn phím Enter để gửi tin nhắn
+userInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    chatForm.dispatchEvent(new Event('submit'));
+  }
+});
   // Hiển thị tin nhắn của học sinh (kèm ảnh nếu có)
   appendMessage('user', message || "(Học sinh đã gửi một ảnh bài tập)", imageToSend);
   
