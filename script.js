@@ -206,7 +206,7 @@ function appendMessage(sender, text, imageSrc = null) {
   return content;
 }
 
-// 6. Gửi yêu cầu đến Gemini API (Hỗ trợ đa phương thức văn bản & ảnh)
+// 6. Gửi yêu cầu đến Gemini API với cơ chế Tự động dự phòng & Thử lại khi quá tải
 async function sendToGemini(textMessage, base64Image) {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
@@ -227,30 +227,62 @@ async function sendToGemini(textMessage, base64Image) {
 
   conversationHistory.push({ role: "user", parts: parts });
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+  // Danh sách các mô hình Flash tốc độ cao để tự động luân chuyển khi máy chủ Google quá tải
+  const candidateModels = [
+    'gemini-2.0-flash',
+    'gemini-2.0-flash-lite',
+    'gemini-3.8-flash'
+  ];
+
   const payload = {
     contents: conversationHistory,
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
     generationConfig: { temperature: 0.65, maxOutputTokens: 1000 }
   };
 
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
+  let lastError = null;
 
-  if (!res.ok) {
-    const errData = await res.json();
-    throw new Error(errData.error?.message || 'Lỗi kết nối máy chủ AI');
+  // Tự động thử từng mô hình hoặc thử lại nếu gặp lỗi "high demand"
+  for (const modelName of candidateModels) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    
+    // Thử tối đa 2 lần cho mỗi mô hình
+    for (let attempt = 0; attempt < 2; attempt++) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const replyText = data.candidates[0].content.parts[0].text;
+          conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+          return replyText;
+        }
+
+        const errData = await res.json();
+        const errMsg = errData.error?.message || '';
+        lastError = new Error(errMsg || 'Lỗi kết nối máy chủ AI');
+
+        // Nếu máy chủ báo nghẽn tải (high demand / 503 / 429), chờ 1 giây rồi thử tiếp
+        if (errMsg.includes('high demand') || errMsg.includes('overloaded') || res.status === 503 || res.status === 429) {
+          await new Promise(r => setTimeout(r, 1200));
+          continue;
+        } else {
+          break; // Nếu là lỗi khác (như sai cú pháp/model không tồn tại) thì chuyển ngay sang model kế tiếp
+        }
+      } catch (networkErr) {
+        lastError = networkErr;
+        await new Promise(r => setTimeout(r, 1000));
+      }
+    }
   }
 
-  const data = await res.json();
-  const replyText = data.candidates[0].content.parts[0].text;
-  conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
-  return replyText;
+  // Nếu tất cả các mô hình tạm thời đều bận
+  throw lastError || new Error('Máy chủ AI hiện đang bận, em hãy thử bấm gửi lại sau vài giây nhé!');
 }
-
 // 7. Xử lý tương tác gửi câu hỏi
 if (chatForm) {
   chatForm.addEventListener('submit', async (e) => {
