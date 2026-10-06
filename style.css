@@ -49,10 +49,285 @@ body {
   padding-bottom: 70px; /* Chừa khoảng trống cho đồng hoa hướng dương */
 }
 
-/* ĐẢM BẢO KHUNG CHAT NỔI BẬT LÊN TRÊN */
+/* TỔNG THỂ KHÔNG GIAN HỌC TẬP */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(180deg, #f0fdf4 0%, #fefce8 60%, #fef08a 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  padding-bottom: 85px; /* Dành chỗ cho cánh đồng hoa */
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* KHUNG NÓI CHUYỆN: MỞ RỘNG TỐI ƯU KHÔNG GIAN */
 .classroom-container {
+  width: 100%;
+  max-width: 1200px; /* Mở rộng tối đa lên 1200px (máy tính bàn/laptop hiển thị rất thoáng) */
+  height: 86vh;
+  background: #ffffff;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border: 3px solid #86efac;
   position: relative;
   z-index: 10;
+}
+
+/* BANNER TIÊU ĐỀ */
+.classroom-banner {
+  background: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80') center/cover;
+  position: relative;
+  padding: 14px 20px;
+  border-bottom: 2px solid #bbf7d0;
+}
+
+.banner-overlay {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(6px);
+  padding: 12px 18px;
+  border-radius: 16px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.title-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.title-with-badge h1 {
+  font-size: 1.35rem;
+  color: #166534;
+  font-weight: 800;
+}
+
+.author-badge {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* KHUNG CHAT MỞ RỘNG */
+.chat-box {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #fafaf9;
+}
+
+.message {
+  display: flex;
+  gap: 12px;
+  max-width: 82%; /* Mở rộng chiều rộng bong bóng chat */
+  animation: fadeIn 0.3s ease;
+}
+
+.user-message {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.ai-message {
+  align-self: flex-start;
+}
+
+.msg-content {
+  padding: 12px 18px;
+  border-radius: 18px;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.user-message .msg-content {
+  background: #16a34a;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.ai-message .msg-content {
+  background: #ffffff;
+  color: #1f2937;
+  border: 1.5px solid #e5e7eb;
+  border-bottom-left-radius: 4px;
+}
+
+/* Ô NHẬP LIỆU CHÂN KHUNG */
+.input-container {
+  padding: 12px 18px;
+  background: #ffffff;
+  border-top: 1.5px solid #e5e7eb;
+}
+
+#chat-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#user-input {
+  flex: 1;
+  border: 2px solid #86efac;
+  border-radius: 24px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: none;
+  max-height: 120px;
+  outline: none;
+}
+
+#user-input:focus {
+  border-color: #16a34a;
+}
+
+/* DẢI TRANG TRÍ CHÂN THỰC 2 BÊN */
+.side-decor {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 5;
+}
+
+.left-decor { left: 16px; }
+.right-decor { right: 16px; }
+
+.decor-card {
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 14px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px solid #bbf7d0;
+  width: 82px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.decor-card img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.decor-card span {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #166534;
+  text-align: center;
+}
+
+/* CÁNH ĐỒNG HOA HƯỚNG DƯƠNG CHÂN THỰC */
+.real-sunflower-field {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 75px;
+  background: url('https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=1600&q=80') center bottom / cover repeat-x;
+  z-index: 2;
+  border-top: 3px solid #facc15;
+}
+
+/* ===================================================
+   TÍNH NĂNG TƯƠNG THÍCH MỌI THIẾT BỊ (RESPONSIVE)
+=================================================== */
+
+/* 1. Màn hình Laptop nhỏ & iPad ngang (1024px - 1400px): Thu gọn lề để khung chat rộng rãi */
+@media (max-width: 1420px) {
+  .side-decor {
+    display: none; /* Tự động ẩn 2 dải bên để nhường 100% không gian cho khung chat */
+  }
+  .classroom-container {
+    max-width: 95%;
+  }
+}
+
+/* 2. iPad dọc & Máy tính bảng (768px - 1024px) */
+@media (max-width: 1024px) {
+  .classroom-container {
+    width: 96%;
+    height: 88vh;
+  }
+  .message {
+    max-width: 88%;
+  }
+}
+
+/* 3. Điện thoại thông minh các loại (iPhone, Samsung, Xiaomi...) < 768px */
+@media (max-width: 768px) {
+  body {
+    padding: 6px;
+    padding-bottom: 55px; /* Giảm chiều cao cánh đồng hoa để không chiếm chỗ */
+  }
+  .real-sunflower-field {
+    height: 48px;
+  }
+  .classroom-container {
+    width: 100%;
+    height: calc(100vh - 65px);
+    border-radius: 16px;
+    border-width: 2px;
+  }
+  .banner-overlay {
+    padding: 8px 10px;
+  }
+  .title-with-badge h1 {
+    font-size: 1.1rem;
+  }
+  .author-badge {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+  }
+  .classroom-banner p {
+    display: none; /* Ẩn bớt mô tả phụ trên điện thoại để tiết kiệm màn hình */
+  }
+  .chat-box {
+    padding: 12px;
+    gap: 10px;
+  }
+  .message {
+    max-width: 94%;
+  }
+  .msg-content {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+  }
+  .input-container {
+    padding: 8px 10px;
+  }
+  #user-input {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
 }
 
 /* DẢI ICON HAI BÊN TRANG WEB */
