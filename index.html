@@ -129,5 +129,34 @@
   </div>
 
   <script src="./script.js"></script>
+<!-- MODAL ĐĂNG KÝ THÔNG TIN LỚP HỌC (HIỆN KHI MỚI VÀO WEB) -->
+  <div class="modal-overlay" id="student-info-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Chào Mừng Nhà Thám Hiểm Số!</h3>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 12px; color: #475569; font-size: 0.95rem;">
+          Để bắt đầu buổi học cùng <strong>Cô Vân Anh & Trợ lý AI</strong>, em hãy cho cô biết thông tin lớp học nhé:
+        </p>
+        
+        <div style="margin-bottom: 12px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #166534;">Trường học:</label>
+          <input type="text" id="student-school" value="TH Nhật Tiến" placeholder="Ví dụ: TH Nhật Tiến" style="margin-top: 4px;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="font-weight: 700; font-size: 0.85rem; color: #166534;">Lớp của em:</label>
+          <input type="text" id="student-class" placeholder="Ví dụ: 5A1, 5A2..." style="margin-top: 4px;">
+          <small id="class-error-text" style="color: #ef4444; display: none;">* Vui lòng nhập tên lớp của em nhé!</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btn-start-learning" style="width: 100%; font-size: 1rem; padding: 10px;">
+          🚀 Bắt đầu học ngay!
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
