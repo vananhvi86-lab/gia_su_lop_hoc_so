@@ -4,8 +4,7 @@
  * Đơn vị: Trường Tiểu học Nhật Tiến
  * Căn cứ: Thông tư 02/2025/TT-BGDĐT, Quyết định 2422/QĐ-BGDĐT, Công văn 5588/BGDĐT-GDPT
  */
-// DÁN ĐƯỜNG LINK APPS SCRIPT CỦA CÔ VÀO ĐÂY:
-const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycby6hoXG_RJrZ1byR0xwbA8iV-U2-y86cLEuCpi4-Mn9bJ10R_vWZHXuSwhcxD64wMbd/exec";
+
 const SYSTEM_INSTRUCTION = `
 Bạn là "Gia sư trợ lý", trợ lý AI thông minh, kiên nhẫn, trung thực và an toàn, do cô Vân Anh thiết kế riêng cho học sinh Lớp 5 (10-11 tuổi).
 - Xưng hô: Tự xưng là "Tớ" và gọi học sinh là "Bạn" hoặc "Nhà thám hiểm số" 🚀.
@@ -238,7 +237,7 @@ async function sendToGemini(textMessage, base64Image) {
   const candidateModels = [
     'gemini-2.0-flash',
     'gemini-2.0-flash-lite',
-    'gemini-3.8-flash' 'gemini-3.5-flash'
+    'gemini-3.8-flash'
   ];
 
   const payload = {
@@ -333,8 +332,6 @@ if (chatForm) {
       const aiReply = await sendToGemini(message, imageToSend);
       chatBox.removeChild(loadingDiv);
       appendMessage('ai', aiReply);
-      // Tự động ghi nhật ký vào Google Sheet
-logInteractionToSheet(message || "[Gửi ảnh bài tập]", aiReply);
     } catch (err) {
       chatBox.removeChild(loadingDiv);
       appendMessage('ai', `⚠️ **Lỗi:** ${err.message}. Em hãy kiểm tra lại kết nối mạng hoặc nhờ cô Vân Anh kiểm tra lại nhé!`);
@@ -361,26 +358,3 @@ if (btnClear) {
 }
 
 window.addEventListener('DOMContentLoaded', checkApiKey);
-// HÀM TỰ ĐỘNG LƯU QUÁ TRÌNH TƯƠNG TÁC LÊN GOOGLE SHEET
-async function logInteractionToSheet(question, answer) {
-  if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL.includes("...")) return;
-
-  try {
-    const payload = {
-      school: "Trường TH Nhật Tiến",
-      className: "Khối 5",
-      userQuestion: question,
-      aiResponse: answer
-    };
-
-    // Gửi ngầm không làm gián đoạn trải nghiệm của học sinh
-    await fetch(GOOGLE_SHEET_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  } catch (err) {
-    console.warn("Không thể đồng bộ vào Google Sheet:", err);
-  }
-}
