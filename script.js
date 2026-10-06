@@ -238,7 +238,7 @@ async function sendToGemini(textMessage, base64Image) {
   const candidateModels = [
     'gemini-2.0-flash',
     'gemini-2.0-flash-lite',
-    'gemini-3.8-flash'
+    'gemini-3.8-flash' 'gemini-3.5-flash'
   ];
 
   const payload = {
