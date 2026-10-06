@@ -421,3 +421,7 @@ if (btnClear) {
 }
 
 window.addEventListener('DOMContentLoaded', checkApiKey);
+window.addEventListener('DOMContentLoaded', () => {
+  checkApiKey();
+  checkStudentInfo();
+});
