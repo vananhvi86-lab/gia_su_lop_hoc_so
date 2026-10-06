@@ -26,7 +26,70 @@ MÔ HÌNH 3A BẮT BUỘC TUÂN THỦ:
   + Nếu học sinh cung cấp thông tin (họ tên, ngày sinh, số điện thoại, số tài khoản...): Hãy phản hồi chính xác thông điệp cảnh báo:
     "Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
 `;
+const STUDENT_SCHOOL_KEY = 'student_school_name';
+const STUDENT_CLASS_KEY = 'student_class_name';
 
+const infoModal = document.getElementById('student-info-modal');
+const inputSchool = document.getElementById('student-school');
+const inputClass = document.getElementById('student-class');
+const btnStartLearning = document.getElementById('btn-start-learning');
+const classErrorText = document.getElementById('class-error-text');
+
+// Kiểm tra xem học sinh đã nhập thông tin trường lớp chưa
+function checkStudentInfo() {
+  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY);
+  const savedClass = localStorage.getItem(STUDENT_CLASS_KEY);
+
+  if (!savedClass) {
+    if (infoModal) infoModal.classList.add('active');
+  } else {
+    if (inputSchool) inputSchool.value = savedSchool || "TH Nhật Tiến";
+    if (inputClass) inputClass.value = savedClass;
+  }
+}
+
+// Xử lý khi học sinh bấm "Bắt đầu học ngay"
+if (btnStartLearning) {
+  btnStartLearning.addEventListener('click', () => {
+    const schoolVal = inputSchool.value.trim() || "TH Nhật Tiến";
+    const classVal = inputClass.value.trim();
+
+    if (!classVal) {
+      if (classErrorText) classErrorText.style.display = 'block';
+      inputClass.focus();
+      return;
+    }
+
+  // Ghi nhật ký tương tác lên Google Sheets E-Portfolio
+async function logInteractionToSheet(question, answer) {
+  if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL.includes("...")) return;
+
+  const currentSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || ".....";
+  const currentClass = localStorage.getItem(STUDENT_CLASS_KEY) || "Khối 5";
+
+  try {
+    const payload = {
+      school: currentSchool,
+      className: currentClass,
+      userQuestion: question,
+      aiResponse: answer
+    };
+
+    await fetch(GOOGLE_SHEET_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch (err) {
+    console.warn("Lưu Google Sheet:", err);
+  }
+}
+
+    // Đóng hộp thoại
+    if (infoModal) infoModal.classList.remove('active');
+  });
+}
 const API_KEY_STORAGE = 'gemini_api_key_tutor';
 let conversationHistory = [];
 let currentBase64Image = null;
