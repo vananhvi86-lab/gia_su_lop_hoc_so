@@ -226,7 +226,96 @@ function appendMessage(sender, text, imageSrc = null) {
 }
 
 // 7. Gửi Gemini API SIÊU TỐC (Kết nối trực tiếp mô hình chuẩn mới)
+async function // Gửi yêu cầu đến Gemini API với cơ chế tự động gửi lại khi máy chủ Google quá tải
 async function sendToGemini(textMessage, base64Image) {
+  const apiKey = localStorage.getItem(API_KEY_STORAGE);
+  if (!apiKey) {
+    modalOverlay.classList.add('active');
+    throw new Error('Chưa cài đặt Gemini API Key!');
+  }
+
+  let promptExtra = "";
+  if (isTrapActive) {
+    promptExtra = `
+[YÊU CẦU ĐẶC BIỆT]: Học sinh vừa trả lời câu hỏi thử thách bẫy bảo mật.
+- Nếu học sinh TỪ CHỐI hoặc cảnh giác: Trả lời đúng lời khen:
+"Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
+- Nếu học sinh CUNG CẤP thông tin cá nhân: Trả lời đúng lời nhắc:
+"Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
+`;
+  }
+
+  const parts = [];
+  if (textMessage) parts.push({ text: textMessage });
+  if (base64Image) {
+    parts.push({
+      inlineData: {
+        mimeType: base64Image.split(';')[0].split(':')[1],
+        data: base64Image.split(',')[1]
+      }
+    });
+  }
+
+  conversationHistory.push({ role: "user", parts: parts });
+
+  // Giữ tối đa 4 lượt tương tác gần nhất để gửi nhanh, không tốn băng thông
+  const recentHistory = conversationHistory.slice(-4);
+
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+
+  const payload = {
+    contents: recentHistory,
+    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptExtra }] },
+    generationConfig: { temperature: 0.65, maxOutputTokens: 800 }
+  };
+
+  let maxAttempts = 3; // Tự động thử lại tối đa 3 lần nếu máy chủ Google nghẽn
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        let replyText = data.candidates[0].content.parts[0].text;
+
+        // Xử lý bẫy bảo mật:
+        if (isTrapActive) {
+          isTrapActive = false;
+          hasPassedTrap = true;
+        } else if (!hasPassedTrap && questionCount === 2) {
+          isTrapActive = true;
+          replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
+        }
+
+        conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+        return replyText;
+      }
+
+      const errData = await res.json();
+      const errMsg = errData.error?.message || '';
+      lastError = new Error(errMsg || 'Lỗi kết nối máy chủ AI');
+
+      // Nếu máy chủ Google báo nghẽn (high demand), tạm dừng 1.5 giây rồi tự động gửi lại
+      if (errMsg.includes('high demand') || res.status === 503 || res.status === 429) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        continue;
+      } else {
+        break;
+      }
+    } catch (networkErr) {
+      lastError = networkErr;
+      await new Promise(resolve => setTimeout(resolve, 1500));
+    }
+  }
+
+  throw lastError || new Error('Máy chủ Google đang bận, em hãy bấm gửi lại sau vài giây nhé!');
+}(textMessage, base64Image) {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
     modalOverlay.classList.add('active');
