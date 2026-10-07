@@ -225,8 +225,7 @@ function appendMessage(sender, text, imageSrc = null) {
   return content;
 }
 
-// 7. Gửi Gemini API SIÊU TỐC (Kết nối trực tiếp mô hình chuẩn mới)
-async function // Gửi yêu cầu đến Gemini API với cơ chế tự động gửi lại khi máy chủ Google quá tải
+// 7.Gửi yêu cầu đến Gemini API với cơ chế tự động gửi lại khi máy chủ Google quá tải
 async function sendToGemini(textMessage, base64Image) {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
