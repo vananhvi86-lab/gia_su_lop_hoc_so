@@ -62,7 +62,7 @@ const btnEditStudent = document.getElementById('btn-edit-student');
 
 // 1. Luôn yêu cầu khai báo Trường & Lớp mỗi lần mở/tải lại trang
 function checkStudentInfo() {
-  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || "TH Nhật Tiến";
+  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || "               ";
   
   if (inputSchool) inputSchool.value = savedSchool;
   if (inputClass) inputClass.value = ""; // Để trống ô Lớp để học sinh nhập mới mỗi lần vào
@@ -246,9 +246,7 @@ async function sendToGemini(textMessage, base64Image) {
     modalOverlay.classList.add('active');
     throw new Error('Chưa cài đặt Gemini API Key!');
   }
-// Hệ thống sẽ ưu tiên model ổn định nhất, nếu gặp trục trặc sẽ tự chuyển sang model kế tiếp
-const models = ['gemini-2.0-flash', 'gemini-3.8-flash'];
-  // 1. Chỉ thị sư phạm cô đọng (Giúp AI suy luận nhanh, không tốn tài nguyên)
+
   let promptExtra = "";
   if (isTrapActive) {
     promptExtra = `
@@ -258,7 +256,6 @@ const models = ['gemini-2.0-flash', 'gemini-3.8-flash'];
 `;
   }
 
-  // 2. Đóng gói dữ liệu câu hỏi hiện tại
   const currentParts = [];
   if (textMessage) currentParts.push({ text: textMessage });
   if (base64Image) {
@@ -271,6 +268,69 @@ const models = ['gemini-2.0-flash', 'gemini-3.8-flash'];
   }
 
   conversationHistory.push({ role: "user", parts: currentParts });
+
+  // Tối ưu ngữ cảnh: gửi 2 lượt hội thoại gần nhất
+  const trimmedContents = conversationHistory.slice(-2);
+
+  // Sử dụng đúng mô hình chuẩn gemini-3.8-flash
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+
+  const payload = {
+    contents: trimmedContents,
+    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptExtra }] },
+    generationConfig: {
+      temperature: 0.4,
+      maxOutputTokens: 500
+    }
+  };
+
+  let lastError = null;
+
+  // Thử kết nối tối đa 3 lần
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
+
+        // Điều phối bẫy an toàn mạng sau đúng 2 câu hỏi
+        if (isTrapActive) {
+          isTrapActive = false;
+          hasPassedTrap = true;
+        } else if (!hasPassedTrap && questionCount === 2) {
+          isTrapActive = true;
+          replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
+        }
+
+        conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+        return replyText;
+      }
+
+      const errData = await res.json().catch(() => ({}));
+      const errMsg = errData.error?.message || `Lỗi máy chủ (${res.status})`;
+      lastError = new Error(errMsg);
+
+      // Nếu gặp lúc mạng bận hoặc nghẽn tải, chờ 1.2 giây rồi thử lại
+      if (res.status === 503 || res.status === 429 || errMsg.includes('high demand')) {
+        await new Promise(r => setTimeout(r, 1200));
+        continue;
+      } else {
+        break;
+      }
+    } catch (netErr) {
+      lastError = netErr;
+      await new Promise(r => setTimeout(r, 1000));
+    }
+  }
+
+  throw lastError || new Error('Máy chủ Google đang bận, em hãy bấm gửi lại sau vài giây nhé!');
+}
 
   // 3. TỐI ƯU BĂNG THÔNG: Chỉ lấy duy nhất 2 lượt tương tác gần nhất
   // Cắt bỏ hoàn toàn lịch sử dài để giảm 80% thời gian xử lý của AI
