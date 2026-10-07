@@ -65,7 +65,7 @@ function checkStudentInfo() {
   if (!savedClass) {
     if (infoModal) infoModal.classList.add('active');
   } else {
-    if (inputSchool) inputSchool.value = savedSchool || "TH Nhật Tiến";
+    if (inputSchool) inputSchool.value = savedSchool || "...............";
     if (inputClass) inputClass.value = savedClass;
   }
 }
