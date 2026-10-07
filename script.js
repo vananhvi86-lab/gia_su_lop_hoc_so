@@ -359,7 +359,7 @@ async function logInteractionToSheet(question, answer) {
   }
 }
 
-// 9. Xử lý khi bấm nút Gửi câu hỏi
+// 9. XỬ LÝ GỬI TIN NHẮN TỐI ƯU TRẢI NGHIỆM
 if (chatForm) {
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -376,6 +376,7 @@ if (chatForm) {
     if (imageUpload) imageUpload.value = '';
     if (previewContainer) previewContainer.classList.add('hidden');
 
+    // Hiển thị trạng thái đang suy nghĩ
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'message ai-message';
     loadingDiv.innerHTML = `
@@ -386,13 +387,19 @@ if (chatForm) {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
+      // 1. Nhận câu trả lời từ AI siêu tốc
       const reply = await sendToGemini(msg, img);
       chatBox.removeChild(loadingDiv);
       appendMessage('ai', reply);
-      logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
+
+      // 2. Ghi Google Sheet chạy ngầm hoàn toàn ở phía sau (không chặn giao diện)
+      setTimeout(() => {
+        logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
+      }, 50);
+
     } catch (err) {
       chatBox.removeChild(loadingDiv);
-      appendMessage('ai', `⚠️ **Lỗi:** ${err.message}. Em hãy thử bấm gửi lại nhé!`);
+      appendMessage('ai', `⚠️ ${err.message}`);
     }
   });
 }
