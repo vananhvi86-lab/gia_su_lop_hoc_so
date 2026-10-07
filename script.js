@@ -246,7 +246,8 @@ async function sendToGemini(textMessage, base64Image) {
     modalOverlay.classList.add('active');
     throw new Error('Chưa cài đặt Gemini API Key!');
   }
-
+// Hệ thống sẽ ưu tiên model ổn định nhất, nếu gặp trục trặc sẽ tự chuyển sang model kế tiếp
+const models = ['gemini-2.0-flash', 'gemini-3.8-flash'];
   // 1. Chỉ thị sư phạm cô đọng (Giúp AI suy luận nhanh, không tốn tài nguyên)
   let promptExtra = "";
   if (isTrapActive) {
