@@ -2,102 +2,34 @@
  * DỰ ÁN: GIA SƯ AI - LỚP HỌC SỐ 4.0
  * Tác giả & Thiết kế Sư phạm: Cô giáo Vi Thị Vân Anh
  * Đơn vị: Trường Tiểu học Nhật Tiến
- * Căn cứ: Thông tư 02/2025/TT-BGDĐT, Quyết định 2422/QĐ-BGDĐT, Công văn 5588/BGDĐT-GDPT
  */
 
+const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx6hoXG_RJrZ1byR0xwbA8iV-U2-y86cLEuCpi4-Mn9bJ10R_vWZHXuSwhcxD64wMbd/exec";
+
 const SYSTEM_INSTRUCTION = `
-Bạn là "Gia sư trợ lý", trợ lý AI thông minh, kiên nhẫn, trung thực và an toàn, do cô Vân Anh thiết kế riêng cho học sinh Lớp 5 (10-11 tuổi).
+Bạn là "Gia sư trợ lý", trợ lý AI thông minh, kiên nhẫn, trung thực và an toàn do cô Vân Anh thiết kế riêng cho học sinh Tiểu học.
 - Xưng hô: Tự xưng là "Tớ" và gọi học sinh là "Bạn" hoặc "Nhà thám hiểm số" 🚀.
 - Phong cách: Tươi vui, gần gũi, ngắn gọn, dùng biểu tượng cảm xúc sinh động ✨.
 
-MÔ HÌNH 3A BẮT BUỘC TUÂN THỦ:
-1. TRỤ CỘT 1 - ABILITY (Phát triển năng lực số bình đẳng):
-- Hướng dẫn thao tác ngắn gọn, dễ thực hiện cả trên điện thoại lẫn máy tính.
-- Khuyến khích học sinh tự lưu trữ sản phẩm vào E-Portfolio/Padlet.
-
-2. TRỤ CỘT 2 - AI (Trung thực & Phương pháp Socratic - Không làm hộ):
-- TUYỆT ĐỐI KHÔNG giải hộ bài tập, không viết hộ bài văn, không đưa code Scratch hoàn chỉnh.
-- Chỉ phân tích từ khóa, đặt câu hỏi gợi mở tư duy logic từng bước để học sinh tự tìm ra câu trả lời.
-
-3. TRỤ CỘT 3 - AWARENESS (Giáo dục an toàn mạng & Đánh giá bẫy bảo mật):
-- Nếu đang trong giai đoạn THỬ THÁCH BẪY BẢO MẬT:
-  + Nếu học sinh từ chối cung cấp thông tin: Hãy phản hồi chính xác thông điệp khen thưởng:
-    "Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình tiếp tục học tập nhé!"
-  + Nếu học sinh cung cấp thông tin (họ tên, ngày sinh, số điện thoại, số tài khoản...): Hãy phản hồi chính xác thông điệp cảnh báo:
+MÔ HÌNH 3A BẮT BUỘC:
+1. NĂNG LỰC SỐ (ABILITY): Hướng dẫn dễ hiểu, ngắn gọn.
+2. PHƯƠNG PHÁP SOCRATIC (AI): TUYỆT ĐỐI KHÔNG giải hộ bài tập, không viết hộ code Scratch hoàn chỉnh. Chỉ phân tích từ khóa, gợi ý khối lệnh logic từng bước để học sinh tự làm.
+3. AN TOÀN MẠNG (AWARENESS):
+  + Nếu học sinh từ chối cung cấp thông tin cá nhân: Phản hồi đúng câu:
+    "Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
+  + Nếu học sinh cung cấp thông tin cá nhân: Cảnh báo đúng câu:
     "Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
 `;
+
+const API_KEY_STORAGE = 'gemini_api_key_tutor';
 const STUDENT_SCHOOL_KEY = 'student_school_name';
 const STUDENT_CLASS_KEY = 'student_class_name';
 
-const infoModal = document.getElementById('student-info-modal');
-const inputSchool = document.getElementById('student-school');
-const inputClass = document.getElementById('student-class');
-const btnStartLearning = document.getElementById('btn-start-learning');
-const classErrorText = document.getElementById('class-error-text');
-
-// Kiểm tra xem học sinh đã nhập thông tin trường lớp chưa
-function checkStudentInfo() {
-  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY);
-  const savedClass = localStorage.getItem(STUDENT_CLASS_KEY);
-
-  if (!savedClass) {
-    if (infoModal) infoModal.classList.add('active');
-  } else {
-    if (inputSchool) inputSchool.value = savedSchool || "TH Nhật Tiến";
-    if (inputClass) inputClass.value = savedClass;
-  }
-}
-
-// Xử lý khi học sinh bấm "Bắt đầu học ngay"
-if (btnStartLearning) {
-  btnStartLearning.addEventListener('click', () => {
-    const schoolVal = inputSchool.value.trim() || "TH Nhật Tiến";
-    const classVal = inputClass.value.trim();
-
-    if (!classVal) {
-      if (classErrorText) classErrorText.style.display = 'block';
-      inputClass.focus();
-      return;
-    }
-
-  // Ghi nhật ký tương tác lên Google Sheets E-Portfolio
-async function logInteractionToSheet(question, answer) {
-  if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL.includes("...")) return;
-
-  const currentSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || ".....";
-  const currentClass = localStorage.getItem(STUDENT_CLASS_KEY) || "Khối 5";
-
-  try {
-    const payload = {
-      school: currentSchool,
-      className: currentClass,
-      userQuestion: question,
-      aiResponse: answer
-    };
-
-    await fetch(GOOGLE_SHEET_WEBAPP_URL, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
-  } catch (err) {
-    console.warn("Lưu Google Sheet:", err);
-  }
-}
-
-    // Đóng hộp thoại
-    if (infoModal) infoModal.classList.remove('active');
-  });
-}
-const API_KEY_STORAGE = 'gemini_api_key_tutor';
 let conversationHistory = [];
 let currentBase64Image = null;
-
-// BIẾN QUẢN LÝ TÌNH HUỐNG THỰC HÀNH AN TOÀN MẠNG
-let questionCount = 0;              // Đếm số câu hỏi học sinh đã tương tác
-let isTrapActive = false;           // Đánh dấu bẫy bảo mật đang được bật
-let hasPassedTrap = false;          // Đánh dấu học sinh đã hoàn thành bài thử thách
+let questionCount = 0;
+let isTrapActive = false;
+let hasPassedTrap = false;
 
 // DOM Elements
 const chatBox = document.getElementById('chat-box');
@@ -117,14 +49,59 @@ const btnSaveKey = document.getElementById('btn-save-key');
 const apiKeyInput = document.getElementById('api-key-input');
 const keyStatusText = document.getElementById('key-status-text');
 
-// 1. Quản lý Modal & API Key
+// Elements Thông tin học sinh
+const infoModal = document.getElementById('student-info-modal');
+const inputSchool = document.getElementById('student-school');
+const inputClass = document.getElementById('student-class');
+const btnStartLearning = document.getElementById('btn-start-learning');
+const classErrorText = document.getElementById('class-error-text');
+const btnEditStudent = document.getElementById('btn-edit-student');
+
+// 1. Quản lý Khai báo Trường & Lớp
+function checkStudentInfo() {
+  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY);
+  const savedClass = localStorage.getItem(STUDENT_CLASS_KEY);
+
+  if (!savedClass) {
+    if (infoModal) infoModal.classList.add('active');
+  } else {
+    if (inputSchool) inputSchool.value = savedSchool || "TH Nhật Tiến";
+    if (inputClass) inputClass.value = savedClass;
+  }
+}
+
+if (btnEditStudent) {
+  btnEditStudent.addEventListener('click', () => {
+    if (infoModal) infoModal.classList.add('active');
+  });
+}
+
+if (btnStartLearning) {
+  btnStartLearning.addEventListener('click', () => {
+    const schoolVal = inputSchool.value.trim() || "TH Nhật Tiến";
+    const classVal = inputClass.value.trim();
+
+    if (!classVal) {
+      if (classErrorText) classErrorText.style.display = 'block';
+      inputClass.focus();
+      return;
+    }
+
+    if (classErrorText) classErrorText.style.display = 'none';
+    localStorage.setItem(STUDENT_SCHOOL_KEY, schoolVal);
+    localStorage.setItem(STUDENT_CLASS_KEY, classVal);
+    if (infoModal) infoModal.classList.remove('active');
+  });
+}
+
+// 2. Quản lý API Key
 function checkApiKey() {
   const key = localStorage.getItem(API_KEY_STORAGE);
   if (!key) {
-    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #ef4444;">Vui lòng nhập API Key để kích hoạt Trợ lý!</span>';
+    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #ef4444;">Vui lòng nhập API Key để kích hoạt!</span>';
     if (modalOverlay) modalOverlay.classList.add('active');
   } else {
-    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #2e7d32;">Đã cài đặt API Key sẵn sàng!</span>';
+    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #2e7d32;">API Key đã sẵn sàng!</span>';
     if (apiKeyInput) apiKeyInput.value = key;
   }
 }
@@ -145,7 +122,7 @@ if (btnSaveKey) {
   });
 }
 
-// 2. Ô nhập văn bản
+// 3. Tự giãn ô nhập & phím Enter
 if (userInput) {
   userInput.addEventListener('input', function() {
     this.style.height = 'auto';
@@ -160,29 +137,22 @@ if (userInput) {
   });
 }
 
-// 3. Nhận dạng giọng nói (Micro tiếng Việt)
+// 4. Micro Tiếng Việt
 let recognition = null;
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SpeechRecognition();
   recognition.lang = 'vi-VN';
   recognition.continuous = false;
-  recognition.interimResults = false;
 
   recognition.onstart = () => {
     if (btnMic) btnMic.classList.add('recording');
-    userInput.placeholder = "Đang lắng nghe Nhà thám hiểm số nói...";
+    userInput.placeholder = "Đang lắng nghe...";
   };
 
   recognition.onresult = (event) => {
-    const transcript = event.results[0][0].transcript;
-    userInput.value = transcript;
+    userInput.value = event.results[0][0].transcript;
     userInput.focus();
-  };
-
-  recognition.onerror = () => {
-    if (btnMic) btnMic.classList.remove('recording');
-    userInput.placeholder = "Em muốn hỏi gì, hoặc bấm Micro để nói...";
   };
 
   recognition.onend = () => {
@@ -193,24 +163,16 @@ if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
 
 if (btnMic) {
   btnMic.addEventListener('click', () => {
-    if (!recognition) {
-      alert('Trình duyệt hiện tại chưa hỗ trợ micro. Bạn hãy dùng Google Chrome hoặc Microsoft Edge nhé!');
-      return;
-    }
-    try {
-      recognition.start();
-    } catch (err) {
-      recognition.stop();
-    }
+    if (!recognition) return alert('Trình duyệt chưa hỗ trợ micro. Hãy dùng Chrome hoặc Edge nhé!');
+    try { recognition.start(); } catch (err) { recognition.stop(); }
   });
 }
 
-// 4. Xử lý ảnh bài tập
+// 5. Ảnh bài tập
 if (imageUpload) {
   imageUpload.addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = function(event) {
       currentBase64Image = event.target.result;
@@ -229,7 +191,7 @@ if (btnRemoveImg) {
   });
 }
 
-// 5. Hiển thị tin nhắn
+// 6. Hiển thị tin nhắn
 function appendMessage(sender, text, imageSrc = null) {
   const msgDiv = document.createElement('div');
   msgDiv.className = `message ${sender}-message`;
@@ -242,16 +204,16 @@ function appendMessage(sender, text, imageSrc = null) {
   content.className = 'msg-content';
 
   if (sender === 'ai') {
-    if (typeof marked !== 'undefined') {
-      content.innerHTML = marked.parse(text);
-    } else {
-      content.textContent = text;
-    }
+    content.innerHTML = (typeof marked !== 'undefined') ? marked.parse(text) : text;
   } else {
     content.textContent = text;
     if (imageSrc) {
       const img = document.createElement('img');
       img.src = imageSrc;
+      img.style.maxWidth = "200px";
+      img.style.borderRadius = "8px";
+      img.style.marginTop = "8px";
+      img.style.display = "block";
       content.appendChild(img);
     }
   }
@@ -263,7 +225,7 @@ function appendMessage(sender, text, imageSrc = null) {
   return content;
 }
 
-// 6. Gửi yêu cầu đến Gemini API có cơ chế thử lại & điều phối bẫy bảo mật
+// 7. Gửi Gemini API SIÊU TỐC (Kết nối trực tiếp mô hình chuẩn mới)
 async function sendToGemini(textMessage, base64Image) {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
@@ -271,111 +233,96 @@ async function sendToGemini(textMessage, base64Image) {
     throw new Error('Chưa cài đặt Gemini API Key!');
   }
 
-  let promptInstructionExtra = "";
-
-  // Nếu học sinh đang phản hồi câu hỏi bẫy
+  let promptExtra = "";
   if (isTrapActive) {
-    promptInstructionExtra = `
-[YÊU CẦU ĐẶC BIỆT]: Học sinh vừa trả lời câu hỏi thử thách an toàn mạng. 
-- Nếu học sinh TỪ CHỐI cung cấp thông tin hoặc cảnh giác, hãy trả lời chính xác:
+    promptExtra = `
+[YÊU CẦU ĐẶC BIỆT]: Học sinh vừa trả lời câu hỏi thử thách bẫy bảo mật.
+- Nếu học sinh TỪ CHỐI hoặc cảnh giác: Trả lời đúng lời khen:
 "Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
-- Nếu học sinh ĐỒNG Ý cung cấp thông tin cá nhân (họ tên, ngày sinh, số điện thoại, tài khoản...), hãy trả lời chính xác:
-"Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Hãy nhớ bảo vệ thông tin cá nhân thật cẩn thận nha. Giờ chúng mình cùng học tiếp nào!"
+- Nếu học sinh CUNG CẤP thông tin cá nhân: Trả lời đúng lời nhắc:
+"Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
 `;
   }
 
   const parts = [];
   if (textMessage) parts.push({ text: textMessage });
-
   if (base64Image) {
-    const base64Data = base64Image.split(',')[1];
-    const mimeType = base64Image.split(';')[0].split(':')[1];
     parts.push({
-      inlineData: { mimeType: mimeType, data: base64Data }
+      inlineData: {
+        mimeType: base64Image.split(';')[0].split(':')[1],
+        data: base64Image.split(',')[1]
+      }
     });
   }
 
   conversationHistory.push({ role: "user", parts: parts });
 
-  const candidateModels = [
-    'gemini-2.0-flash',
-    'gemini-2.0-flash-lite',
-    'gemini-3.8-flash'
-  ];
+  // Sử dụng endpoint chuẩn xác, phản hồi tức thì
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
   const payload = {
     contents: conversationHistory,
-    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptInstructionExtra }] },
-    generationConfig: { temperature: 0.6, maxOutputTokens: 1000 }
+    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptExtra }] },
+    generationConfig: { temperature: 0.65, maxOutputTokens: 1000 }
   };
 
-  let lastError = null;
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
 
-  for (const modelName of candidateModels) {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-    
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          let replyText = data.candidates[0].content.parts[0].text;
-
-          // Xử lý logic bẫy an toàn mạng:
-          if (isTrapActive) {
-            // Học sinh đã trả lời xong bẫy -> Đóng bẫy và đánh dấu đã vượt qua
-            isTrapActive = false;
-            hasPassedTrap = true;
-          } else if (!hasPassedTrap && questionCount === 2) {
-            // Đúng sau 2 câu hỏi học tập, gắn thêm câu hỏi bẫy vào cuối câu trả lời
-            isTrapActive = true;
-            replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
-          }
-
-          conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
-          return replyText;
-        }
-
-        const errData = await res.json();
-        const errMsg = errData.error?.message || '';
-        lastError = new Error(errMsg || 'Lỗi kết nối máy chủ AI');
-
-        if (errMsg.includes('high demand') || res.status === 503 || res.status === 429) {
-          await new Promise(r => setTimeout(r, 1200));
-          continue;
-        } else {
-          break;
-        }
-      } catch (networkErr) {
-        lastError = networkErr;
-        await new Promise(r => setTimeout(r, 1000));
-      }
-    }
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(errData.error?.message || 'Máy chủ bận, hãy thử lại!');
   }
 
-  throw lastError || new Error('Máy chủ AI hiện đang bận, em hãy bấm gửi lại sau vài giây nhé!');
+  const data = await res.json();
+  let replyText = data.candidates[0].content.parts[0].text;
+
+  // Điều phối bẫy an toàn mạng:
+  if (isTrapActive) {
+    isTrapActive = false;
+    hasPassedTrap = true;
+  } else if (!hasPassedTrap && questionCount === 2) {
+    isTrapActive = true;
+    replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
+  }
+
+  conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+  return replyText;
 }
 
-// 7. Gửi câu hỏi
+// 8. Lưu quá trình lên Google Sheet
+async function logInteractionToSheet(question, answer) {
+  if (!GOOGLE_SHEET_WEBAPP_URL) return;
+
+  const school = localStorage.getItem(STUDENT_SCHOOL_KEY) || "TH Nhật Tiến";
+  const className = localStorage.getItem(STUDENT_CLASS_KEY) || "Khối 5";
+
+  try {
+    await fetch(GOOGLE_SHEET_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ school, className, userQuestion: question, aiResponse: answer })
+    });
+  } catch (e) {
+    console.warn("Lưu Google Sheet:", e);
+  }
+}
+
+// 9. Xử lý Gửi tin nhắn
 if (chatForm) {
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const message = userInput.value.trim();
-    const imageToSend = currentBase64Image;
+    const msg = userInput.value.trim();
+    const img = currentBase64Image;
+    if (!msg && !img) return;
 
-    if (!message && !imageToSend) return;
+    if (!isTrapActive) questionCount++;
 
-    // Tăng biến đếm câu hỏi nếu không phải đang trong lượt trả lời bẫy
-    if (!isTrapActive) {
-      questionCount++;
-    }
-
-    appendMessage('user', message || "(Học sinh gửi ảnh bài tập)", imageToSend);
+    appendMessage('user', msg || "(Gửi ảnh bài tập)", img);
     userInput.value = '';
     userInput.style.height = 'auto';
     currentBase64Image = null;
@@ -392,20 +339,21 @@ if (chatForm) {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-      const aiReply = await sendToGemini(message, imageToSend);
+      const reply = await sendToGemini(msg, img);
       chatBox.removeChild(loadingDiv);
-      appendMessage('ai', aiReply);
+      appendMessage('ai', reply);
+      logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
     } catch (err) {
       chatBox.removeChild(loadingDiv);
-      appendMessage('ai', `⚠️ **Lỗi:** ${err.message}. Em hãy kiểm tra lại kết nối mạng hoặc nhờ cô Vân Anh kiểm tra lại nhé!`);
+      appendMessage('ai', `⚠️ **Lỗi:** ${err.message}. Em hãy thử bấm gửi lại nhé!`);
     }
   });
 }
 
-// 8. Làm mới phiên học tập
+// 10. Làm mới
 if (btnClear) {
   btnClear.addEventListener('click', () => {
-    if (confirm('Nhà thám hiểm số có muốn làm mới để bắt đầu khám phá bài học mới không?')) {
+    if (confirm('Nhà thám hiểm số có muốn làm mới cuộc trò chuyện không?')) {
       conversationHistory = [];
       questionCount = 0;
       isTrapActive = false;
@@ -420,7 +368,6 @@ if (btnClear) {
   });
 }
 
-window.addEventListener('DOMContentLoaded', checkApiKey);
 window.addEventListener('DOMContentLoaded', () => {
   checkApiKey();
   checkStudentInfo();
