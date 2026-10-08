@@ -4,10 +4,7 @@
  * Đơn vị: Trường Tiểu học Nhật Tiến - xã Vân Nham - Lạng Sơn
  * Căn cứ: Thông tư 02/2025/TT-BGDĐT, Quyết định 2422/QĐ-BGDĐT, Công văn 5588/BGDĐT-GDPT
  */
-// Ghép khóa tự động để tránh bộ quét bảo mật của GitHub vô hiệu hóa mã
-const PART_A = "AQ.Ab8RN6L4J6n"; 
-const PART_B = "DmrCS2dYqIUqFEdPy4e5BM1pOidFiUxZlrGDKQw"; 
-const EMBEDDED_API_KEY = PART_A + PART_B;
+
 // ĐƯỜNG DẪN WEB APP GOOGLE APPS SCRIPT ĐỒNG BỘ GOOGLE SHEET
 const GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx6hoXG_RJrZ1byR0xwbA8iV-U2-y86cLEuCpi4-Mn9bJ10R_vWZHXuSwhcxD64wMbd/exec";
 
@@ -65,7 +62,7 @@ const btnEditStudent = document.getElementById('btn-edit-student');
 
 // 1. Luôn yêu cầu khai báo Trường & Lớp mỗi lần mở/tải lại trang
 function checkStudentInfo() {
-  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || "               ";
+  const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || "TH Nhật Tiến";
   
   if (inputSchool) inputSchool.value = savedSchool;
   if (inputClass) inputClass.value = ""; // Để trống ô Lớp để học sinh nhập mới mỗi lần vào
@@ -108,17 +105,16 @@ if (btnStartLearning) {
 
 // 2. Quản lý Modal Cài đặt API Key
 function checkApiKey() {
-  // Nếu đã gắn khóa ngầm trong mã thì tự động lưu vào bộ nhớ máy học sinh
-  if (EMBEDDED_API_KEY && !EMBEDDED_API_KEY.includes("DmrCS2dYqIUqFEdPy4e5BM1pOidFiUxZlrGDKQw")) {
-    localStorage.setItem(API_KEY_STORAGE, EMBEDDED_API_KEY);
-    return;
-  }
-  
   const key = localStorage.getItem(API_KEY_STORAGE);
-  if (!key && modalOverlay) {
-    modalOverlay.classList.add('active');
+  if (!key) {
+    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #ef4444;">Vui lòng nhập API Key để kích hoạt!</span>';
+    if (modalOverlay) modalOverlay.classList.add('active');
+  } else {
+    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #2e7d32;">API Key đã sẵn sàng!</span>';
+    if (apiKeyInput) apiKeyInput.value = key;
   }
 }
+
 if (btnSettings) btnSettings.addEventListener('click', () => modalOverlay.classList.add('active'));
 const closeModal = () => modalOverlay.classList.remove('active');
 if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
@@ -238,35 +234,29 @@ function appendMessage(sender, text, imageSrc = null) {
   return content;
 }
 
-/**
- * 7. HÀM GỬI YÊU CẦU ĐÃ ĐƯỢC TỐI ƯU HÓA TỐC ĐỘ SIÊU TỐC
- * - Phản hồi trong 1.5s - 2.5s
- * - Cơ chế tự ngắt Timeout sau 7 giây
- * - Tối ưu băng thông cho phòng máy trường học
- */
+// 7. Gửi Gemini API tích hợp Bẫy an toàn mạng & Tự động thử lại khi nghẽn tải
 async function sendToGemini(textMessage, base64Image) {
-  const apiKey = (EMBEDDED_API_KEY && !EMBEDDED_API_KEY.includes("DmrCS2dYqIUqFEdPy4e5BM1pOidFiUxZlrGDKQw")) 
-                 ? EMBEDDED_API_KEY 
-                 : localStorage.getItem(API_KEY_STORAGE);
-
+  const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
     modalOverlay.classList.add('active');
     throw new Error('Chưa cài đặt Gemini API Key!');
   }
-  // ... phần logic còn lại giữ nguyên
+
   let promptExtra = "";
   if (isTrapActive) {
     promptExtra = `
-[YÊU CẦU BẪY BẢO MẬT]:
-- Nếu từ chối cung cấp thông tin: Khen ngợi: "Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
-- Nếu cung cấp thông tin cá nhân: Cảnh báo: "Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
+[YÊU CẦU ĐẶC BIỆT]: Học sinh vừa trả lời câu hỏi thử thách bẫy bảo mật.
+- Nếu học sinh TỪ CHỐI hoặc cảnh giác: Trả lời đúng lời khen:
+"Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
+- Nếu học sinh CUNG CẤP thông tin cá nhân: Trả lời đúng lời nhắc:
+"Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
 `;
   }
 
-  const currentParts = [];
-  if (textMessage) currentParts.push({ text: textMessage });
+  const parts = [];
+  if (textMessage) parts.push({ text: textMessage });
   if (base64Image) {
-    currentParts.push({
+    parts.push({
       inlineData: {
         mimeType: base64Image.split(';')[0].split(':')[1],
         data: base64Image.split(',')[1]
@@ -274,27 +264,23 @@ async function sendToGemini(textMessage, base64Image) {
     });
   }
 
-  conversationHistory.push({ role: "user", parts: currentParts });
+  conversationHistory.push({ role: "user", parts: parts });
 
-  // Tối ưu ngữ cảnh: gửi 2 lượt hội thoại gần nhất
-  const trimmedContents = conversationHistory.slice(-2);
+  // Tối ưu gửi 4 lượt tin nhắn gần nhất để phản hồi nhanh, không nghẽn băng thông
+  const recentHistory = conversationHistory.slice(-4);
 
-  // Sử dụng đúng mô hình chuẩn gemini-3.8-flash
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
 
   const payload = {
-    contents: trimmedContents,
+    contents: recentHistory,
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptExtra }] },
-    generationConfig: {
-      temperature: 0.4,
-      maxOutputTokens: 500
-    }
+    generationConfig: { temperature: 0.65, maxOutputTokens: 800 }
   };
 
+  const maxAttempts = 3;
   let lastError = null;
 
-  // Thử kết nối tối đa 3 lần
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -304,9 +290,9 @@ async function sendToGemini(textMessage, base64Image) {
 
       if (res.ok) {
         const data = await res.json();
-        let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
+        let replyText = data.candidates[0].content.parts[0].text;
 
-        // Điều phối bẫy an toàn mạng sau đúng 2 câu hỏi
+        // Xử lý bẫy bảo mật:
         if (isTrapActive) {
           isTrapActive = false;
           hasPassedTrap = true;
@@ -319,88 +305,24 @@ async function sendToGemini(textMessage, base64Image) {
         return replyText;
       }
 
-      const errData = await res.json().catch(() => ({}));
-      const errMsg = errData.error?.message || `Lỗi máy chủ (${res.status})`;
-      lastError = new Error(errMsg);
+      const errData = await res.json();
+      const errMsg = errData.error?.message || '';
+      lastError = new Error(errMsg || 'Lỗi kết nối máy chủ AI');
 
-      // Nếu gặp lúc mạng bận hoặc nghẽn tải, chờ 1.2 giây rồi thử lại
-      if (res.status === 503 || res.status === 429 || errMsg.includes('high demand')) {
-        await new Promise(r => setTimeout(r, 1200));
+      // Tự động thử lại ngầm sau 1.5 giây nếu máy chủ quá tải
+      if (errMsg.includes('high demand') || res.status === 503 || res.status === 429) {
+        await new Promise(resolve => setTimeout(resolve, 1500));
         continue;
       } else {
         break;
       }
-    } catch (netErr) {
-      lastError = netErr;
-      await new Promise(r => setTimeout(r, 1000));
+    } catch (networkErr) {
+      lastError = networkErr;
+      await new Promise(resolve => setTimeout(resolve, 1500));
     }
   }
 
   throw lastError || new Error('Máy chủ Google đang bận, em hãy bấm gửi lại sau vài giây nhé!');
-}
-
-  // 3. TỐI ƯU BĂNG THÔNG: Chỉ lấy duy nhất 2 lượt tương tác gần nhất
-  // Cắt bỏ hoàn toàn lịch sử dài để giảm 80% thời gian xử lý của AI
-  const trimmedContents = conversationHistory.slice(-2);
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-  // 4. CẤU HÌNH SIÊU NHẸ (Chuyên biệt cho học sinh tiểu học)
-  const payload = {
-    contents: trimmedContents,
-    systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptExtra }] },
-    generationConfig: {
-      temperature: 0.2,       // Nhiệt độ thấp giúp AI phản xạ trực diện, nhanh nhất
-      maxOutputTokens: 350,   // Giới hạn câu trả lời ngắn gọn, xuất chữ cực nhanh
-      topP: 0.8
-    }
-  };
-
-  // 5. CƠ CHẾ TIMEOUT 7 GIÂY: Tránh hiện tượng treo máy vô hạn
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 7000);
-
-  try {
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      const errMsg = errData.error?.message || '';
-      if (errMsg.includes('high demand') || res.status === 503 || res.status === 429) {
-        throw new Error('Máy chủ Google đang bận tích tắc, em hãy bấm gửi lại nhé!');
-      }
-      throw new Error('Lỗi kết nối máy chủ AI');
-    }
-
-    const data = await res.json();
-    let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
-
-    // 6. ĐIỀU PHỐI BẪY BẢO MẬT THEO ĐÚNG 2 LƯỢT HỎI
-    if (isTrapActive) {
-      isTrapActive = false;
-      hasPassedTrap = true;
-    } else if (!hasPassedTrap && questionCount === 2) {
-      isTrapActive = true;
-      replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
-    }
-
-    conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
-    return replyText;
-
-  } catch (err) {
-    clearTimeout(timeoutId);
-    if (err.name === 'AbortError') {
-      throw new Error('Mạng Internet bị trễ, em hãy thử bấm nút Gửi lại nhé!');
-    }
-    throw err;
-  }
 }
 
 // 8. Tự động lưu nhật ký tương tác lên Google Sheets E-Portfolio
@@ -427,7 +349,7 @@ async function logInteractionToSheet(question, answer) {
   }
 }
 
-// 9. XỬ LÝ GỬI TIN NHẮN TỐI ƯU TRẢI NGHIỆM
+// 9. Xử lý khi bấm nút Gửi câu hỏi
 if (chatForm) {
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -444,7 +366,6 @@ if (chatForm) {
     if (imageUpload) imageUpload.value = '';
     if (previewContainer) previewContainer.classList.add('hidden');
 
-    // Hiển thị trạng thái đang suy nghĩ
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'message ai-message';
     loadingDiv.innerHTML = `
@@ -455,19 +376,13 @@ if (chatForm) {
     chatBox.scrollTop = chatBox.scrollHeight;
 
     try {
-      // 1. Nhận câu trả lời từ AI siêu tốc
       const reply = await sendToGemini(msg, img);
       chatBox.removeChild(loadingDiv);
       appendMessage('ai', reply);
-
-      // 2. Ghi Google Sheet chạy ngầm hoàn toàn ở phía sau (không chặn giao diện)
-      setTimeout(() => {
-        logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
-      }, 50);
-
+      logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
     } catch (err) {
       chatBox.removeChild(loadingDiv);
-      appendMessage('ai', `⚠️ ${err.message}`);
+      appendMessage('ai', `⚠️ **Lỗi:** ${err.message}. Em hãy thử bấm gửi lại nhé!`);
     }
   });
 }

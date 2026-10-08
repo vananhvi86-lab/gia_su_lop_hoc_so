@@ -1,55 +1,8 @@
-:root {
-  --primary-green: #2e7d32;
-  --accent-green: #4caf50;
-  --soft-blue: #e3f2fd;
-  --robot-blue: #0284c7;
-  --bg-color: #f1f8e9;
-  --text-dark: #263238;
-  --border-color: #dcedc8;
-}
+/* =========================================================
+   THIẾT KẾ GIAO DIỆN LỚP HỌC SỐ 4.0 - CÔ VÂN ANH
+   Hỗ trợ tối ưu: PC, Laptop 13-15", Máy tính bảng, Điện thoại
+   ========================================================= */
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Nunito', sans-serif;
-}
-
-body {
-  background: var(--bg-color);
-  min-height: 300vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-}
-
-/* Thân ứng dụng */
-.classroom-container {
-  width: 95%;
-  max-width: 1200px;
-  height: 94vh;
-  background: #ffffff;
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  border: 3px solid #c8e6c9;
-}
-/* TỔNG THỂ NỀN TRANG WEB */
-body {
-  background: linear-gradient(180deg, #e8f5e9 0%, #fffde7 70%, #fff9c4 100%);
-  position: relative;
-  overflow-x: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding-bottom: 70px; /* Chừa khoảng trống cho đồng hoa hướng dương */
-}
-
-/* TỔNG THỂ KHÔNG GIAN HỌC TẬP */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -63,17 +16,17 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px;
-  padding-bottom: 85px; /* Dành chỗ cho cánh đồng hoa */
+  padding: 14px;
+  padding-bottom: 85px; /* Dành chỗ cho cánh đồng hoa hướng dương */
   position: relative;
   overflow-x: hidden;
 }
 
-/* KHUNG NÓI CHUYỆN: MỞ RỘNG TỐI ƯU KHÔNG GIAN */
+/* KHUNG TƯƠNG TÁC TRUNG TÂM (MỞ RỘNG TỐI ĐA 1250PX) */
 .classroom-container {
-  width: 100%;
-  max-width: 1200px; /* Mở rộng tối đa lên 1200px (máy tính bàn/laptop hiển thị rất thoáng) */
-  height: 86vh;
+  width: 95% !important;
+  max-width: 1250px !important;
+  height: 86vh !important;
   background: #ffffff;
   border-radius: 24px;
   display: flex;
@@ -89,7 +42,7 @@ body {
 .classroom-banner {
   background: url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80') center/cover;
   position: relative;
-  padding: 14px 20px;
+  padding: 12px 18px;
   border-bottom: 2px solid #bbf7d0;
 }
 
@@ -97,12 +50,23 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(6px);
   padding: 12px 18px;
   border-radius: 16px;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.banner-badge {
+  display: inline-block;
+  background: #e0f2fe;
+  color: #0284c7;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-bottom: 4px;
 }
 
 .title-with-badge {
@@ -128,7 +92,32 @@ body {
   font-weight: 700;
 }
 
-/* KHUNG CHAT MỞ RỘNG */
+.classroom-banner p {
+  font-size: 0.88rem;
+  color: #475569;
+  margin-top: 2px;
+}
+
+.banner-actions button {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  padding: 8px 13px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 700;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 4px;
+  font-size: 0.85rem;
+}
+
+.banner-actions button:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+/* KHUNG CHAT */
 .chat-box {
   flex: 1;
   padding: 20px;
@@ -142,8 +131,13 @@ body {
 .message {
   display: flex;
   gap: 12px;
-  max-width: 82%; /* Mở rộng chiều rộng bong bóng chat */
+  max-width: 85% !important;
   animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .user-message {
@@ -155,12 +149,27 @@ body {
   align-self: flex-start;
 }
 
+.msg-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.user-message .msg-avatar { background: #22c55e; color: #fff; }
+.ai-message .msg-avatar { background: #0ea5e9; color: #fff; }
+
 .msg-content {
   padding: 12px 18px;
   border-radius: 18px;
   font-size: 0.98rem;
   line-height: 1.55;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .user-message .msg-content {
@@ -176,7 +185,52 @@ body {
   border-bottom-left-radius: 4px;
 }
 
-/* Ô NHẬP LIỆU CHÂN KHUNG */
+/* XEM TRƯỚC ẢNH */
+.image-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 18px;
+  background: #f0fdf4;
+  border-top: 1px dashed #86efac;
+}
+
+.image-preview-bar.hidden { display: none; }
+
+.preview-item {
+  position: relative;
+  display: inline-block;
+}
+
+.preview-item img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid #16a34a;
+}
+
+.preview-item button {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.preview-tip {
+  font-size: 0.85rem;
+  color: #15803d;
+  font-weight: 600;
+}
+
+/* KHUNG NHẬP LIỆU */
 .input-container {
   padding: 12px 18px;
   background: #ffffff;
@@ -187,6 +241,30 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.action-btn {
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #475569;
+  font-size: 1.1rem;
+  transition: all 0.2s ease;
+}
+
+.action-btn:hover { background: #e2e8f0; color: #1e293b; }
+.action-btn.recording { background: #fee2e2; color: #ef4444; border-color: #ef4444; animation: pulse 1.2s infinite; }
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 #user-input {
@@ -201,9 +279,24 @@ body {
   outline: none;
 }
 
-#user-input:focus {
-  border-color: #16a34a;
+#user-input:focus { border-color: #16a34a; }
+
+.btn-send {
+  background: #16a34a;
+  color: #ffffff;
+  border: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
+
+.btn-send:hover { background: #15803d; transform: scale(1.05); }
 
 /* DẢI TRANG TRÍ CHÂN THỰC 2 BÊN */
 .side-decor {
@@ -220,7 +313,7 @@ body {
 .right-decor { right: 16px; }
 
 .decor-card {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   border-radius: 14px;
   padding: 8px 10px;
   display: flex;
@@ -228,8 +321,13 @@ body {
   align-items: center;
   gap: 4px;
   border: 1.5px solid #bbf7d0;
-  width: 82px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  width: 86px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.decor-card:hover {
+  transform: translateY(-4px) scale(1.05);
 }
 
 .decor-card img {
@@ -245,7 +343,7 @@ body {
   text-align: center;
 }
 
-/* CÁNH ĐỒNG HOA HƯỚNG DƯƠNG CHÂN THỰC */
+/* CHÂN TRANG CÁNH ĐỒNG HOA HƯỚNG DƯƠNG */
 .real-sunflower-field {
   position: fixed;
   bottom: 0;
@@ -257,616 +355,105 @@ body {
   border-top: 3px solid #facc15;
 }
 
-/* ===================================================
-   TÍNH NĂNG TƯƠNG THÍCH MỌI THIẾT BỊ (RESPONSIVE)
-=================================================== */
-
-/* 1. Màn hình Laptop nhỏ & iPad ngang (1024px - 1400px): Thu gọn lề để khung chat rộng rãi */
-@media (max-width: 1420px) {
-  .side-decor {
-    display: none; /* Tự động ẩn 2 dải bên để nhường 100% không gian cho khung chat */
-  }
-  .classroom-container {
-    max-width: 95%;
-  }
-}
-
-/* 2. iPad dọc & Máy tính bảng (768px - 1024px) */
-@media (max-width: 1024px) {
-  .classroom-container {
-    width: 96%;
-    height: 88vh;
-  }
-  .message {
-    max-width: 88%;
-  }
-}
-
-/* 3. Điện thoại thông minh các loại (iPhone, Samsung, Xiaomi...) < 768px */
-@media (max-width: 768px) {
-  body {
-    padding: 6px;
-    padding-bottom: 55px; /* Giảm chiều cao cánh đồng hoa để không chiếm chỗ */
-  }
-  .real-sunflower-field {
-    height: 48px;
-  }
-  .classroom-container {
-    width: 100%;
-    height: calc(100vh - 65px);
-    border-radius: 16px;
-    border-width: 2px;
-  }
-  .banner-overlay {
-    padding: 8px 10px;
-  }
-  .title-with-badge h1 {
-    font-size: 1.1rem;
-  }
-  .author-badge {
-    font-size: 0.7rem;
-    padding: 2px 6px;
-  }
-  .classroom-banner p {
-    display: none; /* Ẩn bớt mô tả phụ trên điện thoại để tiết kiệm màn hình */
-  }
-  .chat-box {
-    padding: 12px;
-    gap: 10px;
-  }
-  .message {
-    max-width: 94%;
-  }
-  .msg-content {
-    font-size: 0.9rem;
-    padding: 10px 14px;
-  }
-  .input-container {
-    padding: 8px 10px;
-  }
-  #user-input {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-  }
-}
-
-/* DẢI ICON HAI BÊN TRANG WEB */
-.side-decor {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  z-index: 5;
-}
-
-.left-decor {
-  left: 20px;
-}
-
-.right-decor {
-  right: 20px;
-}
-
-.decor-item {
-  background: rgba(255, 255, 255, 0.85);
-  padding: 12px 14px;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
-  border: 1.5px solid #c8e6c9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  backdrop-filter: blur(4px);
-  animation: floatDecor 3.5s ease-in-out infinite alternate;
-  transition: transform 0.3s ease;
-}
-
-.decor-item:hover {
-  transform: scale(1.1);
-}
-
-.left-decor .decor-item:nth-child(even),
-.right-decor .decor-item:nth-child(odd) {
-  animation-delay: 1.5s;
-}
-
-.decor-item i {
-  font-size: 26px;
-  color: #2e7d32;
-}
-
-.decor-item span {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #33691e;
-  text-align: center;
-}
-
-/* HIỆU ỨNG TRÔI BỒNG BỀNH CHO ICON */
-@keyframes floatDecor {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-8px); }
-}
-
-/* CHÂN TRANG CÁNH ĐỒNG HOA HƯỚNG DƯƠNG */
-.sunflower-field {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  height: 60px;
-  background: linear-gradient(180deg, transparent 0%, rgba(139, 195, 74, 0.3) 100%);
-  border-bottom: 8px solid #689f38;
-  display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
-  pointer-events: none;
-  z-index: 2;
-  overflow: hidden;
-}
-
-.flower {
-  font-size: 32px;
-  transform-origin: bottom center;
-  animation: swayFlower 2.5s ease-in-out infinite alternate;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.flower:nth-child(even) {
-  font-size: 26px;
-  animation-duration: 3.2s;
-  animation-delay: 0.7s;
-}
-
-.flower:nth-child(3n) {
-  font-size: 36px;
-  animation-duration: 2s;
-  animation-delay: 1.2s;
-}
-
-/* HIỆU ỨNG HOA ĐUNG ĐƯA THEO GIÓ */
-@keyframes swayFlower {
-  0% { transform: rotate(-6deg); }
-  100% { transform: rotate(6deg); }
-}
-
-/* TỐI ƯU TRÊN MÀN HÌNH ĐIỆN THOẠI (ẨN HAI DẢI ICON ĐỂ KHÔNG BỊ CHẬT MÀN HÌNH) */
-@media (max-width: 1100px) {
-  .side-decor {
-    display: none;
-  }
-}
-/* Banner Lớp học hoạt hình */
-.classroom-banner {
-  /* Thay đường dẫn ảnh minh họa cô giáo và robot vào đây */
-  background: url('classroom-bg.png') center/cover no-repeat;
-  position: relative;
-  height: 190px;
-  border-bottom: 3px solid #a5d6a7;
-}
-
-.banner-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.7) 60%, rgba(255, 255, 255, 0.3) 100%);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 28px;
-}
-
-.banner-badge {
-  display: inline-block;
-  background: #2e7d32;
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 20px;
-  margin-bottom: 6px;
-}
-
-.banner-content h1 {
-  font-size: 1.45rem;
-  font-weight: 800;
-  color: #1b5e20;
-}
-
-.banner-content p {
-  font-size: 0.95rem;
-  color: #37474f;
-  margin-top: 2px;
-  font-weight: 600;
-}
-
-.banner-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.banner-actions button {
-  background: #ffffff;
-  border: 1.5px solid #a5d6a7;
-  color: #2e7d32;
-  padding: 8px 14px;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-}
-
-.banner-actions button:hover {
-  background: #e8f5e9;
-  transform: translateY(-1px);
-}
-
-/* Hộp hội thoại */
-.chat-box {
-  flex: 1;
-  padding: 20px 24px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: #fafdf7;
-}
-
-.message {
-  display: flex;
-  gap: 12px;
-  max-width: 85%;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.msg-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.ai-message .msg-avatar {
-  background: #e0f2fe;
-  color: var(--robot-blue);
-  border: 2px solid #bae6fd;
-}
-
-.user-message {
-  align-self: flex-end;
-  flex-direction: row-reverse;
-}
-
-.user-message .msg-avatar {
-  background: #e8f5e9;
-  color: var(--primary-green);
-  border: 2px solid #c8e6c9;
-}
-
-.msg-content {
-  padding: 14px 18px;
-  border-radius: 18px;
-  font-size: 0.95rem;
-  line-height: 1.6;
-}
-
-.ai-message .msg-content {
-  background: #ffffff;
-  color: var(--text-dark);
-  border: 1.5px solid #e0e0e0;
-  border-top-left-radius: 4px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.03);
-}
-
-.user-message .msg-content {
-  background: var(--accent-green);
-  color: #ffffff;
-  border-top-right-radius: 4px;
-}
-
-.msg-content img {
-  max-width: 220px;
-  border-radius: 8px;
-  margin-top: 8px;
-  display: block;
-  border: 2px solid #ffffff;
-}
-
-/* Vùng xem trước ảnh chuẩn bị gửi */
-.image-preview-bar {
-  padding: 8px 24px;
-  background: #f1f8e9;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.image-preview-bar.hidden {
-  display: none;
-}
-
-.preview-item {
-  position: relative;
-  width: 50px;
-  height: 50px;
-}
-
-.preview-item img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid #81c784;
-}
-
-#btn-remove-image {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  background: #ef4444;
-  color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.preview-tip {
-  font-size: 0.85rem;
-  color: #558b2f;
-  font-weight: 600;
-}
-
-/* Khung công cụ nhập liệu */
-.input-container {
-  padding: 14px 20px;
-  background: #ffffff;
-  border-top: 2px solid #e8f5e9;
-}
-
-#chat-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #f9fbe7;
-  border: 2px solid #c5e1a5;
-  padding: 6px 10px;
-  border-radius: 16px;
-}
-
-.action-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  border: none;
-  background: #ffffff;
-  color: #2e7d32;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.2s ease;
-}
-
-.action-btn:hover {
-  background: #e8f5e9;
-  color: #1b5e20;
-}
-
-/* Hiệu ứng khi Micro đang ghi âm */
-.action-btn.recording {
-  background: #ef4444;
-  color: #ffffff;
-  animation: pulseMic 1s infinite alternate;
-}
-
-@keyframes pulseMic {
-  from { transform: scale(1); box-shadow: 0 0 0px #ef4444; }
-  to { transform: scale(1.1); box-shadow: 0 0 10px #ef4444; }
-}
-
-#user-input {
-  flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 0.95rem;
-  resize: none;
-  max-height: 90px;
-  color: #263238;
-}
-
-.btn-send {
-  background: #2e7d32;
-  color: #ffffff;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
-}
-
-.btn-send:hover {
-  background: #1b5e20;
-}
-
-/* Modal Cài đặt */
+/* CÁC HỘP THOẠI MODAL */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0, 0, 0, 0.55);
   display: none;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(3px);
+  z-index: 100;
+  padding: 16px;
 }
 
 .modal-overlay.active { display: flex; }
 
 .modal-card {
-  background: #ffffff;
-  width: 90%;
-  max-width: 460px;
+  background: #fff;
+  width: 100%;
+  max-width: 440px;
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  animation: modalPop 0.25s ease-out;
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 .modal-header {
-  padding: 16px 20px;
-  background: #e8f5e9;
+  padding: 14px 18px;
+  background: #f0fdf4;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #dcfce7;
 }
 
-.modal-header h3 { color: #1b5e20; font-size: 1.1rem; }
-.btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #555; }
-.modal-body { padding: 20px; }
+.modal-header h3 { color: #166534; font-size: 1.1rem; }
+.btn-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; }
+
+.modal-body { padding: 18px; }
+.modal-intro { margin-bottom: 12px; color: #475569; font-size: 0.95rem; line-height: 1.45; }
+
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-weight: 700; font-size: 0.85rem; color: #166534; margin-bottom: 4px; }
+
 .modal-body input {
   width: 100%;
   padding: 10px 14px;
-  border-radius: 8px;
-  border: 1.5px solid #c8e6c9;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 10px;
+  font-family: inherit;
   outline: none;
-  margin-top: 10px;
+  font-size: 0.95rem;
 }
+
+.modal-body input:focus { border-color: #16a34a; }
+
+.error-text { color: #ef4444; display: none; margin-top: 4px; font-weight: 700; font-size: 0.8rem; }
+.key-status { margin-top: 8px; font-size: 0.85rem; font-weight: 700; }
+
 .modal-footer {
-  padding: 14px 20px;
+  padding: 12px 18px;
+  background: #f8fafc;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  background: #f9fbe7;
 }
 
-.btn-primary { background: #2e7d32; color: #fff; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; }
-.btn-secondary { background: #e0e0e0; color: #333; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; }
-/* Tùy chỉnh tiêu đề và huy hiệu bản quyền Vân Anh Vi */
-.title-with-badge {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-/* TỔNG THỂ */
-body {
-  background: linear-gradient(180deg, #f0fdf4 0%, #fefce8 60%, #fef08a 100%);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-  padding-bottom: 90px; /* Dành khoảng trống cho cánh đồng hoa bên dưới */
-  position: relative;
-  overflow-x: hidden;
-}
+.btn-primary { background: #16a34a; color: #fff; border: none; padding: 9px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.95rem; }
+.btn-primary:hover { background: #15803d; }
+.btn-primary.btn-full { width: 100%; font-size: 1rem; padding: 11px; }
 
-/* ĐẢM BẢO KHUNG CHAT DUY NHẤT VÀ NỔI BẬT */
-.classroom-container {
-  width: 100%;
-  max-width: 860px;
-  height: 84vh;
-  background: #ffffff;
-  border-radius: 24px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-  border: 3px solid #86efac;
-  position: relative;
-  z-index: 10;
-}
+.btn-secondary { background: #e2e8f0; color: #475569; border: none; padding: 9px 14px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+.btn-secondary:hover { background: #cbd5e1; }
 
-/* THẺ TRANG TRÍ CHÂN THỰC 2 BÊN */
-.side-decor {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  z-index: 5;
-}
-
-.left-decor { left: 24px; }
-.right-decor { right: 24px; }
-
-.decor-card {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 16px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  border: 2px solid #bbf7d0;
-  transition: all 0.3s ease;
-  width: 95px;
-}
-
-.decor-card:hover {
-  transform: translateY(-6px) scale(1.05);
-  box-shadow: 0 12px 25px rgba(46, 125, 50, 0.2);
-}
-
-.decor-card img {
-  width: 44px;
-  height: 44px;
-  object-fit: contain;
-}
-
-.decor-card span {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: #166534;
-  text-align: center;
-}
-
-/* CÁNH ĐỒNG HOA HƯỚNG DƯƠNG CHÂN THỰC TRẢI DÀI */
-.real-sunflower-field {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  height: 95px;
-  /* Sử dụng ảnh cánh đồng hoa hướng dương thực tế trải dài sắc nét */
-  background: url('https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&w=1600&q=80') center bottom / cover repeat-x;
-  z-index: 2;
-  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
-  border-top: 4px solid #facc15;
-}
-
-/* Ẩn các dải 2 bên khi học sinh dùng trên điện thoại màn hình nhỏ */
-@media (max-width: 1120px) {
+/* TƯƠNG THÍCH MỌI KÍCH THƯỚC MÀN HÌNH */
+@media (max-width: 1420px) {
   .side-decor { display: none; }
-  .classroom-container { height: 88vh; }
+  .classroom-container { width: 96% !important; }
 }
-.author-badge i {
-  color: #2e7d32;
-  font-size: 0.85rem;
+
+@media (max-width: 1024px) {
+  .classroom-container { width: 96% !important; height: 88vh !important; }
+  .message { max-width: 90% !important; }
+}
+
+@media (max-width: 768px) {
+  body { padding: 6px; padding-bottom: 55px; }
+  .real-sunflower-field { height: 48px; }
+  .classroom-container { width: 100% !important; height: calc(100vh - 65px) !important; border-radius: 16px; border-width: 2px; }
+  .banner-overlay { padding: 8px 10px; }
+  .title-with-badge h1 { font-size: 1.05rem; }
+  .author-badge { font-size: 0.68rem; padding: 2px 6px; }
+  .classroom-banner p { display: none; }
+  .chat-box { padding: 12px; gap: 10px; }
+  .message { max-width: 95% !important; }
+  .msg-content { font-size: 0.9rem; padding: 10px 14px; }
+  .input-container { padding: 8px 10px; }
+  #user-input { padding: 8px 12px; font-size: 0.9rem; }
 }
