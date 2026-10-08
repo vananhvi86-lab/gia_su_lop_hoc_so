@@ -257,6 +257,9 @@ function appendMessage(sender, text, imageSrc = null) {
 // ==========================================
 // 7. GỬI GEMINI API (HỖ TRỢ GEMINI 3.8 & 2.5)
 // ==========================================
+// ==========================================
+// 7. GỬI GEMINI API DUY NHẤT CHUẨN GEMINI-3.8-FLASH
+// ==========================================
 async function sendToGemini(textMessage, base64Image) {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
@@ -286,14 +289,11 @@ async function sendToGemini(textMessage, base64Image) {
 
   conversationHistory.push({ role: "user", parts: parts });
 
-  // Tối ưu 2 lượt tin gần nhất để phản hồi siêu tốc
+  // Tối ưu 2 lượt tin gần nhất để phản hồi nhanh, tiết kiệm băng thông
   const recentHistory = conversationHistory.slice(-2);
 
-  // Danh sách mô hình theo đúng yêu cầu: Ưu tiên 3.8-flash, nếu lỗi tự chuyển sang 2.5-flash
-  const candidateModels = [
-    'gemini-3.8-flash',
-    'gemini-2.5-flash'
-  ];
+  // CHỈ DÙNG DUY NHẤT MODEL ĐƯỢC GOOGLE CẤP PHÉP: gemini-3.8-flash
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
 
   const payload = {
     contents: recentHistory,
@@ -303,58 +303,51 @@ async function sendToGemini(textMessage, base64Image) {
 
   let lastError = null;
 
-  for (const modelName of candidateModels) {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+  // Thử kết nối tối đa 3 lần (nếu máy chủ Google bận thì tự động thử lại)
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+      if (res.ok) {
+        const data = await res.json();
+        let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
 
-        if (res.ok) {
-          const data = await res.json();
-          let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
-
-        // Điều phối bẫy bảo mật sau 2 lượt hỏi
-          if (isTrapActive) {
-            isTrapActive = false;
-            hasPassedTrap = true;
-          } else if (!hasPassedTrap && questionCount === 2) {
-            isTrapActive = true;
-            replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
-          }
-
-          conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
-          return replyText;
+        // Điều phối bẫy bảo mật sau đúng 2 câu hỏi học tập
+        if (isTrapActive) {
+          isTrapActive = false;
+          hasPassedTrap = true;
+        } else if (!hasPassedTrap && questionCount === 2) {
+          isTrapActive = true;
+          replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
         }
 
-        const errData = await res.json().catch(() => ({}));
-        const errMsg = errData.error?.message || `Lỗi máy chủ (${res.status})`;
-        lastError = new Error(errMsg);
-
-        // Nếu model không hỗ trợ, thoát ra chuyển ngay sang model kế tiếp
-        if (errMsg.includes('no longer available') || errMsg.includes('not found')) {
-          break;
-        }
-
-        // Nếu máy chủ nghẽn, đợi 1 giây rồi thử lại
-        if (res.status === 503 || res.status === 429 || errMsg.includes('high demand')) {
-          await new Promise(r => setTimeout(r, 1000));
-          continue;
-        }
-      } catch (netErr) {
-        lastError = netErr;
-        await new Promise(r => setTimeout(r, 1000));
+        conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+        return replyText;
       }
+
+      const errData = await res.json().catch(() => ({}));
+      const errMsg = errData.error?.message || `Lỗi máy chủ (${res.status})`;
+      lastError = new Error(errMsg);
+
+      // Nếu gặp lúc cao điểm hoặc lỗi 503/429, chờ 1.2 giây rồi tự động gửi lại
+      if (res.status === 503 || res.status === 429 || errMsg.includes('high demand')) {
+        await new Promise(r => setTimeout(r, 1200));
+        continue;
+      } else {
+        break;
+      }
+    } catch (netErr) {
+      lastError = netErr;
+      await new Promise(r => setTimeout(r, 1000));
     }
   }
 
   throw lastError || new Error('Máy chủ Google đang bận, em hãy bấm gửi lại sau vài giây nhé!');
 }
-
 // ==========================================
 // 8. ĐỒNG BỘ GOOGLE SHEETS CHẠY NGẦM
 // ==========================================
