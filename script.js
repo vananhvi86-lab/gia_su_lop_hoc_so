@@ -318,7 +318,7 @@ async function sendToGemini(textMessage, base64Image) {
           const data = await res.json();
           let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
 
-          // Điều phối bẫy bảo mật sau 2 lượt hỏi
+        // Điều phối bẫy bảo mật sau 2 lượt hỏi
           if (isTrapActive) {
             isTrapActive = false;
             hasPassedTrap = true;
