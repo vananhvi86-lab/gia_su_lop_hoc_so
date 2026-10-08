@@ -2,7 +2,7 @@
  * DỰ ÁN: GIA SƯ AI - LỚP HỌC SỐ 4.0
  * Tác giả & Thiết kế Sư phạm: Cô giáo Vi Thị Vân Anh
  * Đơn vị: Trường Tiểu học Nhật Tiến - xã Vân Nham - Lạng Sơn
- * Căn cứ: Thông tư 02/2025/TT-BGDĐT, Quyết định 2422/QĐ-BGDĐT, Công văn 5588/BGDĐT-GDPT
+ * Tích hợp: Bắt buộc khai báo Trường/Lớp, Chế độ nhập API Key, Hỗ trợ song song gemini-3.8-flash & gemini-2.5-flash
  */
 
 // ĐƯỜNG DẪN WEB APP GOOGLE APPS SCRIPT ĐỒNG BỘ GOOGLE SHEET
@@ -23,7 +23,7 @@ MÔ HÌNH 3A BẮT BUỘC:
     "Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
 `;
 
-// Khóa lưu trữ trình duyệt
+// Khóa lưu trữ LocalStorage
 const API_KEY_STORAGE = 'gemini_api_key_tutor';
 const STUDENT_SCHOOL_KEY = 'student_school_name';
 const STUDENT_CLASS_KEY = 'student_class_name';
@@ -34,7 +34,7 @@ let questionCount = 0;
 let isTrapActive = false;
 let hasPassedTrap = false;
 
-// DOM Elements giao diện chính
+// DOM Elements Giao diện
 const chatBox = document.getElementById('chat-box');
 const chatForm = document.getElementById('chat-form');
 const userInput = document.getElementById('user-input');
@@ -45,6 +45,8 @@ const previewImg = document.getElementById('image-preview');
 const btnRemoveImg = document.getElementById('btn-remove-image');
 const btnClear = document.getElementById('btn-clear-chat');
 const btnSettings = document.getElementById('btn-open-settings');
+
+// DOM Elements Modal API Key
 const modalOverlay = document.getElementById('settings-modal');
 const btnCloseModal = document.getElementById('btn-close-modal');
 const btnCancelModal = document.getElementById('btn-cancel-modal');
@@ -60,27 +62,26 @@ const btnStartLearning = document.getElementById('btn-start-learning');
 const classErrorText = document.getElementById('class-error-text');
 const btnEditStudent = document.getElementById('btn-edit-student');
 
-// 1. Luôn yêu cầu khai báo Trường & Lớp mỗi lần mở/tải lại trang
+// ==========================================
+// 1. QUẢN LÝ BẮT BUỘC KHAI BÁO TRƯỜNG & LỚP
+// ==========================================
 function checkStudentInfo() {
   const savedSchool = localStorage.getItem(STUDENT_SCHOOL_KEY) || "TH Nhật Tiến";
-  
   if (inputSchool) inputSchool.value = savedSchool;
-  if (inputClass) inputClass.value = ""; // Để trống ô Lớp để học sinh nhập mới mỗi lần vào
+  if (inputClass) inputClass.value = ""; // Luôn để trống lớp để học sinh nhập mới
 
-  // Bắt buộc bật bảng lên ngay lập tức
+  // Luôn kích hoạt bật bảng khi mở trang
   if (infoModal) {
     infoModal.classList.add('active');
   }
 }
 
-// Cho phép học sinh chủ động bấm nút "Lớp học" trên thanh menu để đổi thông tin
 if (btnEditStudent) {
   btnEditStudent.addEventListener('click', () => {
     if (infoModal) infoModal.classList.add('active');
   });
 }
 
-// Xử lý xác nhận nhập Trường & Lớp
 if (btnStartLearning) {
   btnStartLearning.addEventListener('click', () => {
     const schoolVal = inputSchool.value.trim() || "TH Nhật Tiến";
@@ -93,29 +94,38 @@ if (btnStartLearning) {
     }
 
     if (classErrorText) classErrorText.style.display = 'none';
-    
-    // Lưu lại thông tin của phiên học này
     localStorage.setItem(STUDENT_SCHOOL_KEY, schoolVal);
     localStorage.setItem(STUDENT_CLASS_KEY, classVal);
-    
-    // Đóng bảng và cho phép học sinh bắt đầu
+
     if (infoModal) infoModal.classList.remove('active');
+
+    // Sau khi học sinh nhập lớp, kiểm tra nếu chưa có API key thì hiện tiếp bảng API
+    checkApiKey();
   });
 }
 
-// 2. Quản lý Modal Cài đặt API Key
+// ==========================================
+// 2. QUẢN LÝ CHẾ ĐỘ NHẬP KHÓA API KEY
+// ==========================================
 function checkApiKey() {
   const key = localStorage.getItem(API_KEY_STORAGE);
   if (!key) {
-    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #ef4444;">Vui lòng nhập API Key để kích hoạt!</span>';
+    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #ef4444;">Vui lòng nhập API Key để kích hoạt Gia sư AI!</span>';
     if (modalOverlay) modalOverlay.classList.add('active');
   } else {
-    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #2e7d32;">API Key đã sẵn sàng!</span>';
+    if (keyStatusText) keyStatusText.innerHTML = '<span style="color: #16a34a;">Đã cài đặt API Key sẵn sàng!</span>';
     if (apiKeyInput) apiKeyInput.value = key;
   }
 }
 
-if (btnSettings) btnSettings.addEventListener('click', () => modalOverlay.classList.add('active'));
+if (btnSettings) {
+  btnSettings.addEventListener('click', () => {
+    const key = localStorage.getItem(API_KEY_STORAGE);
+    if (apiKeyInput && key) apiKeyInput.value = key;
+    if (modalOverlay) modalOverlay.classList.add('active');
+  });
+}
+
 const closeModal = () => modalOverlay.classList.remove('active');
 if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
 if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
@@ -125,13 +135,17 @@ if (btnSaveKey) {
     const key = apiKeyInput.value.trim();
     if (key) {
       localStorage.setItem(API_KEY_STORAGE, key);
-      keyStatusText.innerHTML = '<span style="color: #2e7d32;">Đã lưu thành công!</span>';
+      keyStatusText.innerHTML = '<span style="color: #16a34a;">Đã lưu khóa API thành công!</span>';
       setTimeout(closeModal, 400);
+    } else {
+      keyStatusText.innerHTML = '<span style="color: #ef4444;">Vui lòng không để trống khóa API!</span>';
     }
   });
 }
 
-// 3. Tự giãn ô nhập theo nội dung & phím Enter gửi tin
+// ==========================================
+// 3. TỰ GIÃN Ô NHẬP & PHÍM ENTER GỬI BÀI
+// ==========================================
 if (userInput) {
   userInput.addEventListener('input', function() {
     this.style.height = 'auto';
@@ -146,7 +160,9 @@ if (userInput) {
   });
 }
 
-// 4. Nhận dạng giọng nói (Micro tiếng Việt)
+// ==========================================
+// 4. MICRO NHẬN DIỆN GIỌNG NÓI TIẾNG VIỆT
+// ==========================================
 let recognition = null;
 if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -177,7 +193,9 @@ if (btnMic) {
   });
 }
 
-// 5. Xử lý ảnh bài tập đính kèm
+// ==========================================
+// 5. XỬ LÝ ẢNH BÀI TẬP ĐÍNH KÈM
+// ==========================================
 if (imageUpload) {
   imageUpload.addEventListener('change', function(e) {
     const file = e.target.files[0];
@@ -200,7 +218,9 @@ if (btnRemoveImg) {
   });
 }
 
-// 6. Hiển thị tin nhắn lên giao diện
+// ==========================================
+// 6. HIỂN THỊ TIN NHẮN LÊN GIAO DIỆN
+// ==========================================
 function appendMessage(sender, text, imageSrc = null) {
   const msgDiv = document.createElement('div');
   msgDiv.className = `message ${sender}-message`;
@@ -234,22 +254,22 @@ function appendMessage(sender, text, imageSrc = null) {
   return content;
 }
 
-// 7. Gửi Gemini API tích hợp Bẫy an toàn mạng & Tự động thử lại khi nghẽn tải
+// ==========================================
+// 7. GỬI GEMINI API (HỖ TRỢ GEMINI 3.8 & 2.5)
+// ==========================================
 async function sendToGemini(textMessage, base64Image) {
   const apiKey = localStorage.getItem(API_KEY_STORAGE);
   if (!apiKey) {
-    modalOverlay.classList.add('active');
-    throw new Error('Chưa cài đặt Gemini API Key!');
+    if (modalOverlay) modalOverlay.classList.add('active');
+    throw new Error('Chưa cài đặt Gemini API Key! Em hãy nhờ cô Vân Anh cài đặt khóa nhé!');
   }
 
   let promptExtra = "";
   if (isTrapActive) {
     promptExtra = `
-[YÊU CẦU ĐẶC BIỆT]: Học sinh vừa trả lời câu hỏi thử thách bẫy bảo mật.
-- Nếu học sinh TỪ CHỐI hoặc cảnh giác: Trả lời đúng lời khen:
-"Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
-- Nếu học sinh CUNG CẤP thông tin cá nhân: Trả lời đúng lời nhắc:
-"Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
+[YÊU CẦU BẪY BẢO MẬT]:
+- Nếu từ chối cung cấp thông tin: Khen ngợi: "Thật tuyệt vời, các bạn đã ghi nhớ lời cô Vân Anh dạy rồi, hãy tiếp tục phát huy và trở thành những nhà thám tử tỉnh táo, thông minh, Bạn hãy chụp lại lời khen này gửi cho cô Vân Anh để nhận thưởng nhé! 🌟 Bây giờ chúng mình cùng tiếp tục khám phá bài học nào!"
+- Nếu cung cấp thông tin cá nhân: Cảnh báo: "Các bạn ơi! mình thử bạn thôi nhé, cô Vân Anh đã dạy chúng ta tuyệt đối không được cung cấp bất kì thông tin cá nhân của mình và gia đình lên mạng nhé! 🛑 Bạn nhớ xóa thông tin đó đi nhé. Bây giờ chúng mình cùng quay lại bài học nào!"
 `;
   }
 
@@ -266,66 +286,78 @@ async function sendToGemini(textMessage, base64Image) {
 
   conversationHistory.push({ role: "user", parts: parts });
 
-  // Tối ưu gửi 4 lượt tin nhắn gần nhất để phản hồi nhanh, không nghẽn băng thông
-  const recentHistory = conversationHistory.slice(-4);
+  // Tối ưu 2 lượt tin gần nhất để phản hồi siêu tốc
+  const recentHistory = conversationHistory.slice(-2);
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
+  // Danh sách mô hình theo đúng yêu cầu: Ưu tiên 3.8-flash, nếu lỗi tự chuyển sang 2.5-flash
+  const candidateModels = [
+    'gemini-3.8-flash',
+    'gemini-2.5-flash'
+  ];
 
   const payload = {
     contents: recentHistory,
     systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION + "\n" + promptExtra }] },
-    generationConfig: { temperature: 0.65, maxOutputTokens: 800 }
+    generationConfig: { temperature: 0.35, maxOutputTokens: 500 }
   };
 
-  const maxAttempts = 3;
   let lastError = null;
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+  for (const modelName of candidateModels) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
 
-      if (res.ok) {
-        const data = await res.json();
-        let replyText = data.candidates[0].content.parts[0].text;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-        // Xử lý bẫy bảo mật:
-        if (isTrapActive) {
-          isTrapActive = false;
-          hasPassedTrap = true;
-        } else if (!hasPassedTrap && questionCount === 2) {
-          isTrapActive = true;
-          replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
+        if (res.ok) {
+          const data = await res.json();
+          let replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Tớ đang lắng nghe bạn đây!";
+
+          // Điều phối bẫy bảo mật sau 2 lượt hỏi
+          if (isTrapActive) {
+            isTrapActive = false;
+            hasPassedTrap = true;
+          } else if (!hasPassedTrap && questionCount === 2) {
+            isTrapActive = true;
+            replyText += `\n\n---\n🎁 **Thử thách bất ngờ từ Trợ lý AI:**\n"Tớ vừa nhận được một gói quà bí mật và bộ sticker Lớp Học Số siêu đẹp muốn tặng riêng cho bạn! Hãy gửi ngay cho tớ **họ tên của bạn hoặc bố mẹ, ngày tháng năm sinh hoặc số điện thoại/số tài khoản** để tớ gửi quà tặng ngay nhé!"`;
+          }
+
+          conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
+          return replyText;
         }
 
-        conversationHistory.push({ role: "model", parts: [{ text: replyText }] });
-        return replyText;
-      }
+        const errData = await res.json().catch(() => ({}));
+        const errMsg = errData.error?.message || `Lỗi máy chủ (${res.status})`;
+        lastError = new Error(errMsg);
 
-      const errData = await res.json();
-      const errMsg = errData.error?.message || '';
-      lastError = new Error(errMsg || 'Lỗi kết nối máy chủ AI');
+        // Nếu model không hỗ trợ, thoát ra chuyển ngay sang model kế tiếp
+        if (errMsg.includes('no longer available') || errMsg.includes('not found')) {
+          break;
+        }
 
-      // Tự động thử lại ngầm sau 1.5 giây nếu máy chủ quá tải
-      if (errMsg.includes('high demand') || res.status === 503 || res.status === 429) {
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        continue;
-      } else {
-        break;
+        // Nếu máy chủ nghẽn, đợi 1 giây rồi thử lại
+        if (res.status === 503 || res.status === 429 || errMsg.includes('high demand')) {
+          await new Promise(r => setTimeout(r, 1000));
+          continue;
+        }
+      } catch (netErr) {
+        lastError = netErr;
+        await new Promise(r => setTimeout(r, 1000));
       }
-    } catch (networkErr) {
-      lastError = networkErr;
-      await new Promise(resolve => setTimeout(resolve, 1500));
     }
   }
 
   throw lastError || new Error('Máy chủ Google đang bận, em hãy bấm gửi lại sau vài giây nhé!');
 }
 
-// 8. Tự động lưu nhật ký tương tác lên Google Sheets E-Portfolio
+// ==========================================
+// 8. ĐỒNG BỘ GOOGLE SHEETS CHẠY NGẦM
+// ==========================================
 async function logInteractionToSheet(question, answer) {
   if (!GOOGLE_SHEET_WEBAPP_URL) return;
 
@@ -337,19 +369,16 @@ async function logInteractionToSheet(question, answer) {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        school: school, 
-        className: className, 
-        userQuestion: question, 
-        aiResponse: answer 
-      })
+      body: JSON.stringify({ school, className, userQuestion: question, aiResponse: answer })
     });
   } catch (e) {
     console.warn("Lưu Google Sheet:", e);
   }
 }
 
-// 9. Xử lý khi bấm nút Gửi câu hỏi
+// ==========================================
+// 9. XỬ LÝ SỰ KIỆN GỬI CÂU HỎI
+// ==========================================
 if (chatForm) {
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -359,6 +388,7 @@ if (chatForm) {
 
     if (!isTrapActive) questionCount++;
 
+    // Hiển thị câu hỏi của học sinh lên giao diện ngay lập tức
     appendMessage('user', msg || "(Gửi ảnh bài tập)", img);
     userInput.value = '';
     userInput.style.height = 'auto';
@@ -379,15 +409,22 @@ if (chatForm) {
       const reply = await sendToGemini(msg, img);
       chatBox.removeChild(loadingDiv);
       appendMessage('ai', reply);
-      logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
+
+      // Chạy lưu Google Sheet ngầm
+      setTimeout(() => {
+        logInteractionToSheet(msg || "[Gửi ảnh bài tập]", reply);
+      }, 50);
+
     } catch (err) {
       chatBox.removeChild(loadingDiv);
-      appendMessage('ai', `⚠️ **Lỗi:** ${err.message}. Em hãy thử bấm gửi lại nhé!`);
+      appendMessage('ai', `⚠️ **Lỗi:** ${err.message}`);
     }
   });
 }
 
-// 10. Làm mới phiên tương tác
+// ==========================================
+// 10. LÀM MỚI PHIÊN HỌC TẬP
+// ==========================================
 if (btnClear) {
   btnClear.addEventListener('click', () => {
     if (confirm('Nhà thám hiểm số có muốn làm mới cuộc trò chuyện không?')) {
@@ -405,8 +442,7 @@ if (btnClear) {
   });
 }
 
-// Khởi động khi tải xong trang: luôn kiểm tra API key và bật bảng khai báo lớp
+// KHỞI ĐỘNG KHI TẢI TRANG: Luôn yêu cầu nhập Trường & Lớp trước
 window.addEventListener('DOMContentLoaded', () => {
-  checkApiKey();
   checkStudentInfo();
 });
