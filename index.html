@@ -4,19 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gia Sư AI & Cô Giáo - Lớp Học Số</title>
-  <link rel="stylesheet" href="./style.css?v=20261007_final">
+  <link rel="stylesheet" href="./style.css?v=2026_restore">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .classroom-container {
+      width: 95% !important;
+      max-width: 1250px !important;
+      height: 86vh !important;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- DẢI TRANG TRÍ HỌC TẬP THỰC TẾ BÊN TRÁI -->
+  <!-- DẢI TRANG TRÍ BÊN TRÁI -->
   <aside class="side-decor left-decor">
     <div class="decor-card">
-      <img src="https://cdn-icons-png.flaticon.com/512/3389/3389081.png" alt="Sách Toán & Tiếng Việt">
+      <img src="https://cdn-icons-png.flaticon.com/512/3389/3389081.png" alt="Toán & Tiếng Việt">
       <span>Toán & Tiếng Việt</span>
     </div>
     <div class="decor-card">
@@ -28,7 +35,7 @@
       <span>Gia sư AI</span>
     </div>
     <div class="decor-card">
-      <img src="https://cdn-icons-png.flaticon.com/512/1089/1089129.png" alt="Sáng tạo STEM">
+      <img src="https://cdn-icons-png.flaticon.com/512/1089/1089129.png" alt="STEM">
       <span>Sáng tạo STEM</span>
     </div>
   </aside>
@@ -46,9 +53,9 @@
           <p>Cùng Robot thông minh khám phá kiến thức mỗi ngày!</p>
         </div>
         <div class="banner-actions">
-          <button id="btn-edit-student" title="Đổi thông tin Trường/Lớp"><i class="fa-solid fa-id-card"></i> Lớp học</button>
+          <button id="btn-edit-student" title="Khai báo lại Trường/Lớp"><i class="fa-solid fa-id-card"></i> Lớp học</button>
           <button id="btn-clear-chat" title="Bắt đầu phiên hỏi mới"><i class="fa-solid fa-rotate-right"></i> Làm mới</button>
-          <button id="btn-open-settings" title="Cài đặt khóa API"><i class="fa-solid fa-gear"></i> Cài đặt</button>
+          <button id="btn-open-settings" title="Cài đặt khóa API"><i class="fa-solid fa-gear"></i> Cài đặt API</button>
         </div>
       </div>
     </header>
@@ -62,7 +69,7 @@
       </div>
     </main>
 
-    <!-- Khung xem trước hình ảnh bài tập -->
+    <!-- Khung xem trước ảnh đính kèm -->
     <div id="image-preview-container" class="image-preview-bar hidden">
       <div class="preview-item">
         <img id="image-preview" src="" alt="Ảnh bài tập">
@@ -71,7 +78,7 @@
       <span class="preview-tip">Đã chọn ảnh bài tập. Nhập câu hỏi và bấm Gửi nhé!</span>
     </div>
 
-    <!-- Thanh nhập dữ liệu đa phương thức -->
+    <!-- Thanh nhập dữ liệu -->
     <footer class="input-container">
       <form id="chat-form">
         <label for="image-upload" class="action-btn" title="Chụp hoặc Gửi ảnh bài tập">
@@ -89,7 +96,7 @@
     </footer>
   </div>
 
-  <!-- DẢI TRANG TRÍ HỌC TẬP THỰC TẾ BÊN PHẢI -->
+  <!-- DẢI TRANG TRÍ BÊN PHẢI -->
   <aside class="side-decor right-decor">
     <div class="decor-card">
       <img src="https://cdn-icons-png.flaticon.com/512/2920/2920329.png" alt="Học di động">
@@ -109,10 +116,56 @@
     </div>
   </aside>
 
-  <!-- CHÂN TRANG CÁNH ĐỒNG HOA HƯỚNG DƯƠNG CHÂN THỰC -->
+  <!-- CHÂN TRANG CÁNH ĐỒNG HOA HƯỚNG DƯƠNG -->
   <div class="real-sunflower-field"></div>
 
-  <!-- MODAL 1: BẮT BUỘC KHAI BÁO TRƯỜNG & LỚP KHI MỞ TRANG -->
+  <!-- HỘP THOẠI 1: BẮT BUỘC KHAI BÁO TRƯỜNG & LỚP (HIỆN MỖI LẦN VÀO WEB) -->
   <div class="modal-overlay" id="student-info-modal">
     <div class="modal-card">
-      <div class="modal-
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Khai Báo Lớp Học</h3>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">
+          Để bắt đầu buổi học cùng <strong>Cô Vân Anh & Trợ lý AI</strong>, em hãy cho cô biết thông tin lớp học nhé:
+        </p>
+        <div class="form-group">
+          <label>Trường học:</label>
+          <input type="text" id="student-school" value="TH Nhật Tiến" placeholder="Ví dụ: TH Nhật Tiến">
+        </div>
+        <div class="form-group">
+          <label>Lớp của em:</label>
+          <input type="text" id="student-class" placeholder="Ví dụ: 5A1, 5A2...">
+          <small id="class-error-text" class="error-text">* Vui lòng nhập tên lớp của em nhé!</small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary btn-full" id="btn-start-learning">
+          🚀 Bắt đầu học ngay!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HỘP THOẠI 2: CÀI ĐẶT NHẬP KHÓA API KEY -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-key"></i> Cài Đặt Khóa API Gemini</h3>
+        <button class="btn-close" id="btn-close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-intro">Nhập mã <strong>Gemini API Key</strong> của cô/học sinh vào đây để kích hoạt Gia sư AI:</p>
+        <input type="password" id="api-key-input" placeholder="Dán mã AIzaSy... vào đây">
+        <div class="key-status" id="key-status-text"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="btn-cancel-modal">Đóng</button>
+        <button class="btn-primary" id="btn-save-key">Lưu khóa</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./script.js?v=2026_restore"></script>
+</body>
+</html>
